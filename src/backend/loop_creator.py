@@ -166,11 +166,30 @@ class LoopCreator:
 
             if success:
                 self.log(f"✅ Loop created successfully: {output_file.name}", "SUCCESS")
+
+                # Send desktop notification
+                try:
+                    from utils.notifications import notify_success
+                    notify_success(
+                        "Loop Created Successfully",
+                        f"Video loop saved: {output_file.name}"
+                    )
+                except:
+                    pass  # Ignore notification errors
+
                 if progress_callback:
                     progress_callback(1.0, "Complete!")
                 return True
             else:
                 self.log("❌ Rendering failed!", "ERROR")
+
+                # Send error notification
+                try:
+                    from utils.notifications import notify_error
+                    notify_error("Loop Creation Failed", "Failed to render video loop")
+                except:
+                    pass
+
                 return False
 
         except Exception as e:
@@ -215,12 +234,17 @@ class LoopCreator:
 
     def create_crossfade_clip(self, video_path, crossfade_duration, use_gpu=False, progress_callback=None, cancel_event=None):
         """
-        Create a video clip with crossfade at the end
+        Create a seamless looping video with crossfade transition
 
         This creates a seamless loop by:
-        1. Taking the last N seconds of video
-        2. Crossfading it with the first N seconds
-        3. Appending this to the original video
+        1. Taking the main video MINUS crossfade duration (to avoid overlap)
+        2. Creating a crossfaded section that blends the end with the beginning
+        3. Appending the crossfaded section to replace the removed end
+
+        Example: 10 second video with 1 second crossfade
+        - Main part: 0-9 seconds (9 seconds)
+        - Crossfade: blend 9-10s (end) with 0-1s (start) = 1 second
+        - Result: 9s + 1s = 10s seamless loop
 
         Args:
             video_path: Path to input video
@@ -247,17 +271,29 @@ class LoopCreator:
             # Create temp output path
             temp_output = self.output_folder / f"temp_crossfade_{video_path.name}"
 
-            # Use FFmpeg to create crossfade
-            # We'll use xfade filter to blend the end and beginning
+            # Calculate trim point for seamless loop
+            trim_point = duration - crossfade_duration
+
+            # CORRECT crossfade approach for seamless looping:
+            # 1. Main part: 0 to (duration - crossfade_duration)
+            # 2. End part: (duration - crossfade_duration) to duration
+            # 3. Start part: 0 to crossfade_duration
+            # 4. Crossfade end with start
+            # 5. Concatenate trimmed main with crossfaded section
             cmd = [
                 "ffmpeg",
                 "-i", str(video_path),
                 "-i", str(video_path),
                 "-filter_complex",
-                f"[0:v]trim=0:{duration},setpts=PTS-STARTPTS[main];"
-                f"[1:v]trim={duration - crossfade_duration}:{duration},setpts=PTS-STARTPTS[end];"
+                # Trim main video to remove the end (which will be replaced by crossfade)
+                f"[0:v]trim=0:{trim_point},setpts=PTS-STARTPTS[main];"
+                # Get the end section for crossfade
+                f"[1:v]trim={trim_point}:{duration},setpts=PTS-STARTPTS[end];"
+                # Get the start section for crossfade
                 f"[1:v]trim=0:{crossfade_duration},setpts=PTS-STARTPTS[start];"
+                # Crossfade end with start - this creates the seamless transition
                 f"[end][start]xfade=transition=fade:duration={crossfade_duration}:offset=0[faded];"
+                # Concatenate: trimmed main + crossfaded section = same duration, seamless loop
                 f"[main][faded]concat=n=2:v=1:a=0[outv]",
                 "-map", "[outv]",
                 "-map", "0:a?",
@@ -265,6 +301,8 @@ class LoopCreator:
                 "-y",
                 str(temp_output)
             ]
+
+            self.log(f"🔄 Creating seamless crossfade: {crossfade_duration:.1f}s transition at {trim_point:.1f}s")
 
             # Use progress parser for real-time progress
             from utils.ffmpeg_progress import run_ffmpeg_with_progress
