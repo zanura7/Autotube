@@ -136,8 +136,11 @@ class VideoGenerator:
                     self.log(f"✅ Chapter file created: {chapter_file.name}", "SUCCESS")
 
             # Cleanup temp audio
-            if temp_audio and temp_audio.exists():
-                temp_audio.unlink()
+            try:
+                if temp_audio and temp_audio.exists():
+                    temp_audio.unlink()
+            except Exception as e:
+                self.log(f"⚠️  Warning: Could not delete temp file: {e}", "WARNING")
 
             self.log(f"✅ Video created successfully: {output_file.name}", "SUCCESS")
             if progress_callback:
@@ -147,6 +150,17 @@ class VideoGenerator:
 
         except Exception as e:
             self.log(f"❌ Error generating video: {str(e)}", "ERROR")
+
+            # Cleanup temp files on error
+            try:
+                if temp_audio and temp_audio.exists():
+                    temp_audio.unlink()
+                list_file = self.output_folder / "audio_list.txt"
+                if list_file.exists():
+                    list_file.unlink()
+            except:
+                pass
+
             return False
 
     def get_audio_files(self, playlist_path=None, audio_folder=None):
@@ -239,7 +253,8 @@ class VideoGenerator:
                     # Use absolute path
                     f.write(f"file '{audio_file.absolute()}'\n")
 
-            # Use FFmpeg concat demuxer
+            # Use FFmpeg concat demuxer with re-encoding for compatibility
+            # Using copy can fail if audio codecs/bitrates differ
             cmd = [
                 "ffmpeg",
                 "-f",
@@ -248,16 +263,21 @@ class VideoGenerator:
                 "0",
                 "-i",
                 str(list_file),
-                "-c",
-                "copy",
+                "-c:a",
+                "aac",
+                "-b:a",
+                "192k",
+                "-ar",
+                "48000",
                 "-y",
                 str(temp_audio),
             ]
 
             subprocess.run(cmd, check=True, capture_output=True, text=True)
 
-            # Clean up list file
-            list_file.unlink()
+            # Cleanup list file after successful concat
+            if list_file.exists():
+                list_file.unlink()
 
             return temp_audio
 

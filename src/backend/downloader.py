@@ -8,6 +8,12 @@ import subprocess
 from pathlib import Path
 from datetime import datetime
 import json
+import sys
+import os
+
+# Add parent directory to path for imports
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from utils.validators import validate_youtube_url
 
 
 class Downloader:
@@ -56,32 +62,56 @@ class Downloader:
             bool: True if successful, False otherwise
         """
         self.downloaded_files = []
-        total = len(urls)
 
-        self.log(f"🚀 Memulai download {total} file...")
+        # Validate and filter URLs
+        valid_urls = []
+        for url in urls:
+            if validate_youtube_url(url):
+                valid_urls.append(url)
+            else:
+                self.log(f"⚠️  Skipping invalid URL: {url}", "WARNING")
 
-        for index, url in enumerate(urls, 1):
+        if not valid_urls:
+            self.log("❌ No valid URLs to download!", "ERROR")
+            return False
+
+        total = len(valid_urls)
+        self.log(f"🚀 Memulai download {total} file (dari {len(urls)} URLs)...")
+
+        for index, url in enumerate(valid_urls, 1):
             try:
                 if progress_callback:
                     progress_callback(index - 1, total, f"Downloading {index}/{total}")
 
                 self.log(f"⬇️ [{index}/{total}] Downloading: {url}")
 
-                # Download
+                # Download with timeout
                 file_path = self.download_single(url, format_type)
 
-                if file_path:
+                if file_path and file_path.exists():
                     self.downloaded_files.append(file_path)
                     self.log(f"✅ Downloaded: {file_path.name}", "SUCCESS")
 
                     # Normalize if audio and requested
                     if normalize and format_type.startswith("mp3"):
                         self.log(f"🔊 Normalizing audio: {file_path.name}")
-                        self.normalize_audio(file_path)
-                        self.log(f"✅ Audio normalized", "SUCCESS")
+                        if self.normalize_audio(file_path):
+                            self.log(f"✅ Audio normalized", "SUCCESS")
+                        else:
+                            self.log(f"⚠️  Audio normalization skipped", "WARNING")
+                else:
+                    self.log(f"⚠️  Download failed or file not found", "WARNING")
 
             except Exception as e:
                 self.log(f"❌ Error downloading {url}: {str(e)}", "ERROR")
+
+                # Cleanup partial downloads
+                try:
+                    for partial in self.output_folder.glob("*.part"):
+                        partial.unlink()
+                except:
+                    pass
+
                 continue
 
         if progress_callback:
@@ -170,6 +200,9 @@ class Downloader:
 
         Args:
             audio_file: Path to audio file
+
+        Returns:
+            bool: True if successful, False otherwise
         """
         audio_file = Path(audio_file)
         temp_file = audio_file.with_suffix(".normalized.mp3")
@@ -193,16 +226,31 @@ class Downloader:
                 check=True,
                 capture_output=True,
                 text=True,
+                timeout=300,  # 5 minute timeout
             )
 
             # Replace original with normalized
             temp_file.replace(audio_file)
+            return True
+
+        except subprocess.TimeoutExpired:
+            self.log(f"⚠️  Warning: Audio normalization timeout", "WARNING")
+            if temp_file.exists():
+                temp_file.unlink()
+            return False
 
         except subprocess.CalledProcessError as e:
             self.log(f"⚠️  Warning: Audio normalization failed: {e}", "WARNING")
             # Clean up temp file if exists
             if temp_file.exists():
                 temp_file.unlink()
+            return False
+
+        except Exception as e:
+            self.log(f"⚠️  Warning: Unexpected error in normalization: {e}", "WARNING")
+            if temp_file.exists():
+                temp_file.unlink()
+            return False
 
     def generate_playlist(self):
         """

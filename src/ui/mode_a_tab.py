@@ -197,7 +197,7 @@ class ModeATab(ctk.CTkFrame):
         quality_label.grid(row=6, column=0, padx=10, pady=2, sticky="w")
         self.quality_label = quality_label
 
-        self.quality_var = ctk.StringVar(value="23")
+        self.quality_var = ctk.StringVar(value="23 (Good)")
         quality_menu = ctk.CTkOptionMenu(
             settings_frame,
             variable=self.quality_var,
@@ -369,33 +369,69 @@ class ModeATab(ctk.CTkFrame):
             self.console_log.log_warning("Rendering sedang berjalan!")
             return
 
-        # Validate input
+        # Import validators
+        import sys
+        import os
+        sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        from utils.validators import validate_file_path, validate_duration, validate_file_size
+
+        # Validate input video
         video_path = self.video_path_var.get()
         if not video_path:
             self.console_log.log_error("Pilih video input terlebih dahulu!")
             return
 
-        if not Path(video_path).exists():
-            self.console_log.log_error("Video input tidak ditemukan!")
+        is_valid, error_msg = validate_file_path(
+            video_path,
+            must_exist=True,
+            allowed_extensions=['.mp4', '.avi', '.mov', '.mkv', '.webm']
+        )
+        if not is_valid:
+            self.console_log.log_error(f"Video input tidak valid: {error_msg}")
             return
 
-        try:
-            duration = int(self.duration_var.get())
-            if duration <= 0:
-                raise ValueError("Duration must be positive")
-        except ValueError:
-            self.console_log.log_error("Durasi harus berupa angka positif!")
+        # Check file size (max 1GB for input)
+        is_valid, error_msg, size_mb = validate_file_size(video_path, max_size_mb=1000)
+        if not is_valid:
+            self.console_log.log_error(f"Video terlalu besar: {error_msg}")
             return
 
+        self.console_log.log_info(f"ℹ️  Video size: {size_mb:.1f} MB")
+
+        # Validate optional audio
+        audio_path = self.audio_path_var.get()
+        if audio_path:
+            is_valid, error_msg = validate_file_path(
+                audio_path,
+                must_exist=True,
+                allowed_extensions=['.mp3', '.wav', '.m4a', '.aac']
+            )
+            if not is_valid:
+                self.console_log.log_error(f"Audio tidak valid: {error_msg}")
+                return
+
+        # Validate duration
+        duration_str = self.duration_var.get()
+        is_valid, error_msg, duration = validate_duration(
+            duration_str,
+            min_val=1,
+            max_val=600  # Max 10 hours
+        )
+        if not is_valid:
+            self.console_log.log_error(f"Durasi tidak valid: {error_msg}")
+            return
+
+        # Validate crossfade
         try:
             crossfade = float(self.crossfade_var.get())
-            if crossfade < 0:
-                raise ValueError("Crossfade must be non-negative")
-        except ValueError:
-            self.console_log.log_error("Crossfade duration harus berupa angka!")
+            if crossfade < 0 or crossfade > 10:
+                raise ValueError("Crossfade must be between 0 and 10 seconds")
+        except ValueError as e:
+            self.console_log.log_error(f"Crossfade tidak valid: {str(e)}")
             return
 
         self.console_log.log_info(f"🚀 Memulai rendering loop {duration} menit...")
+        self.console_log.log_warning("⚠️  WARNING: Crossfade/looping belum diimplementasi - video akan di-copy saja!")
 
         # Disable button
         self.is_rendering = True
