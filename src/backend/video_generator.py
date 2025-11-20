@@ -324,7 +324,22 @@ class VideoGenerator:
             ]
 
             self.log("🔧 Using audio-only mapping to ignore album art...")
-            result = subprocess.run(cmd, check=True, capture_output=True, text=True)
+            self.log(f"⏳ This may take several minutes for {len(audio_files)} files...")
+            self.log("💡 FFmpeg is re-encoding all audio to AAC format...")
+
+            # Add timeout to prevent hanging forever
+            # For 30 files at ~3 min each, allow up to 15 minutes
+            timeout_seconds = max(600, len(audio_files) * 30)  # At least 10 min, or 30s per file
+
+            self.log(f"⏱️  Timeout set to {timeout_seconds // 60} minutes")
+
+            result = subprocess.run(
+                cmd,
+                check=True,
+                capture_output=True,
+                text=True,
+                timeout=timeout_seconds
+            )
 
             # Check if output file was created
             if not temp_audio.exists():
@@ -338,6 +353,20 @@ class VideoGenerator:
 
             self.log(f"✅ Successfully concatenated {len(audio_files)} audio files")
             return temp_audio
+
+        except subprocess.TimeoutExpired as e:
+            timeout_min = e.timeout // 60 if e.timeout else 10
+            self.log(f"❌ FFmpeg timeout after {timeout_min} minutes!", "ERROR")
+            self.log(f"⚠️  Audio concatenation took too long - may need to reduce number of files", "WARNING")
+
+            # Cleanup
+            try:
+                list_file = self.output_folder / "audio_list.txt"
+                if list_file.exists():
+                    self.log(f"📄 Audio list file saved for debugging: {list_file}", "WARNING")
+            except:
+                pass
+            return None
 
         except subprocess.CalledProcessError as e:
             self.log(f"❌ FFmpeg error during audio concatenation!", "ERROR")
