@@ -281,7 +281,8 @@ class VideoGenerator:
         Returns:
             Path: Path to concatenated audio file
         """
-        temp_audio = self.output_folder / "temp_audio.mp3"
+        # Use M4A format to avoid issues with MP3 + album art
+        temp_audio = self.output_folder / "temp_audio.m4a"
 
         try:
             # Create file list for concat
@@ -300,7 +301,8 @@ class VideoGenerator:
             self.log(f"📋 Concatenating {len(audio_files)} audio files...")
 
             # Use FFmpeg concat demuxer with re-encoding for compatibility
-            # Using copy can fail if audio codecs/bitrates differ
+            # IMPORTANT: Many MP3 files have embedded album art (video stream)
+            # We must use -map 0:a to select ONLY audio stream, ignore video (album art)
             cmd = [
                 "ffmpeg",
                 "-f",
@@ -309,6 +311,8 @@ class VideoGenerator:
                 "0",
                 "-i",
                 str(list_file),
+                "-map",  # Map only audio stream
+                "0:a",   # Select audio from input 0, ignore video (album art)
                 "-c:a",
                 "aac",
                 "-b:a",
@@ -319,6 +323,7 @@ class VideoGenerator:
                 str(temp_audio),
             ]
 
+            self.log("🔧 Using audio-only mapping to ignore album art...")
             result = subprocess.run(cmd, check=True, capture_output=True, text=True)
 
             # Check if output file was created
