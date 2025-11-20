@@ -47,7 +47,7 @@ Windows: Download build dari gyan.dev, extract, lalu tambahkan folder bin ke Env
 Langkah Instalasi
 
 # 1. Clone repository
-git clone [https://github.com/username/contentforge.git](https://github.com/username/contentforge.git)
+git clone [https://github.com/zanura7/Autotube
 cd contentforge
 
 # 2. Buat Virtual Environment (Recommended)
