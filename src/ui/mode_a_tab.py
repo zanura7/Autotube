@@ -16,6 +16,7 @@ class ModeATab(ctk.CTkFrame):
         super().__init__(master)
         self.console_log = console_log
         self.is_rendering = False
+        self.cancel_event = threading.Event()  # For cancellation
 
         self.setup_ui()
 
@@ -244,7 +245,10 @@ class ModeATab(ctk.CTkFrame):
         )
         output_label.grid(row=9, column=0, padx=10, pady=5, sticky="w")
 
-        self.output_folder_var = ctk.StringVar(value="./output/loops")
+        # Use absolute path for output
+        import os
+        default_output = os.path.abspath("./output/loops")
+        self.output_folder_var = ctk.StringVar(value=default_output)
         output_entry = ctk.CTkEntry(
             settings_frame,
             textvariable=self.output_folder_var,
@@ -285,6 +289,19 @@ class ModeATab(ctk.CTkFrame):
             command=self.start_render,
         )
         self.render_btn.pack(side="left", padx=5)
+
+        self.cancel_btn = ctk.CTkButton(
+            button_frame,
+            text="⏹️ Cancel",
+            font=ctk.CTkFont(size=12),
+            height=40,
+            width=120,
+            fg_color="red",
+            hover_color="darkred",
+            command=self.cancel_render,
+            state="disabled",
+        )
+        self.cancel_btn.pack(side="left", padx=5)
 
         open_folder_btn = ctk.CTkButton(
             button_frame,
@@ -431,11 +448,12 @@ class ModeATab(ctk.CTkFrame):
             return
 
         self.console_log.log_info(f"🚀 Memulai rendering loop {duration} menit...")
-        self.console_log.log_warning("⚠️  WARNING: Crossfade/looping belum diimplementasi - video akan di-copy saja!")
 
-        # Disable button
+        # Reset cancel event and enable cancel button
+        self.cancel_event.clear()
         self.is_rendering = True
         self.render_btn.configure(state="disabled", text="⏳ Rendering...")
+        self.cancel_btn.configure(state="normal")
 
         # Run render in separate thread
         thread = threading.Thread(
@@ -482,17 +500,26 @@ class ModeATab(ctk.CTkFrame):
             cpu_crf=crf,
             cpu_threads=threads,
             progress_callback=self.update_progress,
+            cancel_event=self.cancel_event,
         )
 
         # Reset UI
         self.is_rendering = False
         self.render_btn.configure(state="normal", text="🎬 Render Loop")
+        self.cancel_btn.configure(state="disabled")
         self.progress_bar.set(0 if not success else 1)
 
         if success:
             self.progress_label.configure(text="✅ Rendering complete!")
         else:
             self.progress_label.configure(text="❌ Rendering failed!")
+
+    def cancel_render(self):
+        """Cancel the rendering process"""
+        if self.is_rendering:
+            self.console_log.log_warning("🛑 Canceling render...")
+            self.cancel_event.set()
+            self.cancel_btn.configure(state="disabled")
 
     def update_progress(self, progress, message=""):
         """Update progress bar"""

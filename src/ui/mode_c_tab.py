@@ -163,7 +163,10 @@ class ModeCTab(ctk.CTkFrame):
         )
         output_label.grid(row=3, column=0, padx=10, pady=5, sticky="w")
 
-        self.output_folder_var = ctk.StringVar(value="./output/final")
+        # Use absolute path for output
+        import os
+        default_output = os.path.abspath("./output/final")
+        self.output_folder_var = ctk.StringVar(value=default_output)
         output_entry = ctk.CTkEntry(
             settings_frame,
             textvariable=self.output_folder_var,

@@ -53,6 +53,7 @@ class LoopCreator:
         cpu_crf=23,
         cpu_threads="auto",
         progress_callback=None,
+        cancel_event=None,
     ):
         """
         Create a seamless loop from a video
@@ -91,6 +92,10 @@ class LoopCreator:
             self.log(f"🔄 Will create {loops_needed} loops to reach {target_duration}s")
 
             # Step 3: Create crossfade video
+            if cancel_event and cancel_event.is_set():
+                self.log("🛑 Render cancelled by user", "WARNING")
+                return False
+
             self.log("🎬 Creating crossfade transition...")
             if progress_callback:
                 progress_callback(0.3, "Creating crossfade...")
@@ -100,6 +105,11 @@ class LoopCreator:
             )
 
             # Step 4: Create loop by concatenating
+            if cancel_event and cancel_event.is_set():
+                self.log("🛑 Render cancelled by user", "WARNING")
+                self._cleanup_temp_files()
+                return False
+
             self.log(f"🔁 Looping video {loops_needed} times...")
             if progress_callback:
                 progress_callback(0.5, "Looping video...")
@@ -109,6 +119,11 @@ class LoopCreator:
             )
 
             # Step 5: Scale if needed
+            if cancel_event and cancel_event.is_set():
+                self.log("🛑 Render cancelled by user", "WARNING")
+                self._cleanup_temp_files()
+                return False
+
             final_video = looped_video
             if resolution != "Original":
                 self.log(f"📐 Scaling to {resolution}...")
@@ -118,6 +133,11 @@ class LoopCreator:
                 final_video = self.scale_video(looped_video, resolution, use_gpu)
 
             # Step 6: Add audio if provided
+            if cancel_event and cancel_event.is_set():
+                self.log("🛑 Render cancelled by user", "WARNING")
+                self._cleanup_temp_files()
+                return False
+
             if audio_path:
                 self.log("🎵 Adding custom audio...")
                 if progress_callback:
@@ -141,6 +161,9 @@ class LoopCreator:
                 final_video, output_file, use_gpu, cpu_preset, cpu_crf, cpu_threads
             )
 
+            # Cleanup temp files
+            self._cleanup_temp_files()
+
             if success:
                 self.log(f"✅ Loop created successfully: {output_file.name}", "SUCCESS")
                 if progress_callback:
@@ -152,6 +175,8 @@ class LoopCreator:
 
         except Exception as e:
             self.log(f"❌ Error creating loop: {str(e)}", "ERROR")
+            # Cleanup temp files on error
+            self._cleanup_temp_files()
             return False
 
     def get_video_info(self, video_path):
@@ -189,25 +214,278 @@ class LoopCreator:
             raise ValueError(f"Failed to get video info: {str(e)}")
 
     def create_crossfade_clip(self, video_path, crossfade_duration, use_gpu=False):
-        """Create a video clip with crossfade at the end"""
-        # For now, return the input path
-        # In a full implementation, this would split the video and create crossfade
-        # using FFmpeg xfade filter
-        return video_path
+        """
+        Create a video clip with crossfade at the end
+
+        This creates a seamless loop by:
+        1. Taking the last N seconds of video
+        2. Crossfading it with the first N seconds
+        3. Appending this to the original video
+
+        Args:
+            video_path: Path to input video
+            crossfade_duration: Duration of crossfade in seconds
+            use_gpu: Whether to use GPU (not used for crossfade)
+
+        Returns:
+            Path: Path to crossfaded video (temp file)
+        """
+        video_path = Path(video_path)
+
+        try:
+            # Get video info
+            video_info = self.get_video_info(video_path)
+            duration = video_info["duration"]
+
+            # Crossfade duration shouldn't be more than half the video
+            if crossfade_duration > duration / 2:
+                crossfade_duration = duration / 2
+                self.log(f"⚠️  Crossfade duration adjusted to {crossfade_duration:.1f}s", "WARNING")
+
+            # Create temp output path
+            temp_output = self.output_folder / f"temp_crossfade_{video_path.name}"
+
+            # Use FFmpeg to create crossfade
+            # We'll use xfade filter to blend the end and beginning
+            cmd = [
+                "ffmpeg",
+                "-i", str(video_path),
+                "-i", str(video_path),
+                "-filter_complex",
+                f"[0:v]trim=0:{duration},setpts=PTS-STARTPTS[main];"
+                f"[1:v]trim={duration - crossfade_duration}:{duration},setpts=PTS-STARTPTS[end];"
+                f"[1:v]trim=0:{crossfade_duration},setpts=PTS-STARTPTS[start];"
+                f"[end][start]xfade=transition=fade:duration={crossfade_duration}:offset=0[faded];"
+                f"[main][faded]concat=n=2:v=1:a=0[outv]",
+                "-map", "[outv]",
+                "-map", "0:a?",
+                "-c:a", "copy",
+                "-y",
+                str(temp_output)
+            ]
+
+            subprocess.run(cmd, check=True, capture_output=True, text=True)
+
+            return temp_output
+
+        except subprocess.CalledProcessError as e:
+            error_msg = e.stderr if e.stderr else str(e)
+            self.log(f"❌ Crossfade creation failed: {error_msg}", "ERROR")
+            # Fall back to original video
+            return video_path
+
+        except Exception as e:
+            self.log(f"❌ Error creating crossfade: {str(e)}", "ERROR")
+            return video_path
 
     def concatenate_loops(self, video_path, loops, target_duration, use_gpu=False):
-        """Concatenate video multiple times"""
-        # For now, return the input path
-        # In a full implementation, this would use concat demuxer or filter
-        return video_path
+        """
+        Concatenate video multiple times to reach target duration
+
+        Args:
+            video_path: Path to video to loop
+            loops: Number of times to loop
+            target_duration: Target duration in seconds
+            use_gpu: Whether to use GPU (not applicable for concat)
+
+        Returns:
+            Path: Path to looped video (temp file)
+        """
+        video_path = Path(video_path)
+
+        try:
+            # Get video duration
+            video_info = self.get_video_info(video_path)
+            duration = video_info["duration"]
+
+            # Create concat file list
+            concat_list = self.output_folder / "concat_list.txt"
+
+            with open(concat_list, "w") as f:
+                for i in range(loops):
+                    f.write(f"file '{video_path.absolute()}'\n")
+
+            # Create temp output
+            temp_output = self.output_folder / f"temp_looped_{video_path.name}"
+
+            # Use FFmpeg concat demuxer
+            cmd = [
+                "ffmpeg",
+                "-f", "concat",
+                "-safe", "0",
+                "-i", str(concat_list),
+                "-c", "copy",
+                "-t", str(target_duration),  # Trim to exact target duration
+                "-y",
+                str(temp_output)
+            ]
+
+            subprocess.run(cmd, check=True, capture_output=True, text=True)
+
+            # Cleanup concat list
+            if concat_list.exists():
+                concat_list.unlink()
+
+            return temp_output
+
+        except subprocess.CalledProcessError as e:
+            error_msg = e.stderr if e.stderr else str(e)
+            self.log(f"❌ Loop concatenation failed: {error_msg}", "ERROR")
+            return video_path
+
+        except Exception as e:
+            self.log(f"❌ Error concatenating loops: {str(e)}", "ERROR")
+            # Cleanup
+            if concat_list and concat_list.exists():
+                concat_list.unlink()
+            return video_path
 
     def scale_video(self, video_path, resolution, use_gpu=False):
-        """Scale video to target resolution"""
-        return video_path
+        """
+        Scale video to target resolution
+
+        Args:
+            video_path: Path to input video
+            resolution: Target resolution (e.g., "1920x1080")
+            use_gpu: Whether to use GPU acceleration
+
+        Returns:
+            Path: Path to scaled video (temp file)
+        """
+        video_path = Path(video_path)
+
+        if resolution == "Original":
+            return video_path
+
+        try:
+            # Parse resolution
+            width, height = map(int, resolution.split("x"))
+
+            # Create temp output
+            temp_output = self.output_folder / f"temp_scaled_{video_path.name}"
+
+            # Build scale filter
+            if use_gpu:
+                # GPU scaling (CUDA)
+                scale_filter = f"scale_cuda={width}:{height}"
+            else:
+                # CPU scaling with proper aspect ratio handling
+                scale_filter = f"scale={width}:{height}:force_original_aspect_ratio=decrease,pad={width}:{height}:(ow-iw)/2:(oh-ih)/2"
+
+            # Use FFmpeg to scale
+            cmd = [
+                "ffmpeg",
+                "-i", str(video_path),
+                "-vf", scale_filter,
+                "-c:a", "copy",
+                "-y",
+                str(temp_output)
+            ]
+
+            subprocess.run(cmd, check=True, capture_output=True, text=True)
+
+            return temp_output
+
+        except subprocess.CalledProcessError as e:
+            error_msg = e.stderr if e.stderr else str(e)
+            self.log(f"❌ Scaling failed: {error_msg}", "ERROR")
+            return video_path
+
+        except Exception as e:
+            self.log(f"❌ Error scaling video: {str(e)}", "ERROR")
+            return video_path
 
     def add_audio(self, video_path, audio_path, duration):
-        """Add or replace audio track"""
-        return video_path
+        """
+        Add or replace audio track
+
+        Args:
+            video_path: Path to video file
+            audio_path: Path to audio file to add
+            duration: Target duration (trim/loop audio to match)
+
+        Returns:
+            Path: Path to video with new audio (temp file)
+        """
+        video_path = Path(video_path)
+        audio_path = Path(audio_path)
+
+        try:
+            # Create temp output
+            temp_output = self.output_folder / f"temp_audio_{video_path.name}"
+
+            # Get audio duration
+            audio_info = self.get_audio_duration(audio_path)
+
+            # Build audio filter
+            if audio_info < duration:
+                # Loop audio if too short
+                loops_needed = int(duration / audio_info) + 1
+                audio_filter = f"aloop=loop={loops_needed}:size=2e+09,atrim=duration={duration}"
+            else:
+                # Trim audio if too long
+                audio_filter = f"atrim=duration={duration}"
+
+            # Use FFmpeg to replace audio
+            cmd = [
+                "ffmpeg",
+                "-i", str(video_path),
+                "-i", str(audio_path),
+                "-filter_complex", f"[1:a]{audio_filter}[aout]",
+                "-map", "0:v",
+                "-map", "[aout]",
+                "-c:v", "copy",
+                "-c:a", "aac",
+                "-b:a", "192k",
+                "-shortest",
+                "-y",
+                str(temp_output)
+            ]
+
+            subprocess.run(cmd, check=True, capture_output=True, text=True)
+
+            return temp_output
+
+        except subprocess.CalledProcessError as e:
+            error_msg = e.stderr if e.stderr else str(e)
+            self.log(f"❌ Audio replacement failed: {error_msg}", "ERROR")
+            return video_path
+
+        except Exception as e:
+            self.log(f"❌ Error adding audio: {str(e)}", "ERROR")
+            return video_path
+
+    def get_audio_duration(self, audio_path):
+        """Get duration of audio file in seconds"""
+        try:
+            probe = ffmpeg.probe(str(audio_path))
+            duration = float(probe["format"]["duration"])
+            return duration
+        except:
+            return 0
+
+    def _cleanup_temp_files(self):
+        """Cleanup temporary files created during processing"""
+        try:
+            # List of temp file patterns
+            temp_patterns = [
+                "temp_crossfade_*",
+                "temp_looped_*",
+                "temp_scaled_*",
+                "temp_audio_*",
+                "concat_list.txt",
+            ]
+
+            for pattern in temp_patterns:
+                for temp_file in self.output_folder.glob(pattern):
+                    try:
+                        temp_file.unlink()
+                        self.log(f"🗑️  Cleaned up: {temp_file.name}", "INFO")
+                    except Exception as e:
+                        pass  # Ignore cleanup errors
+
+        except Exception as e:
+            pass  # Ignore all cleanup errors
 
     def render_final(
         self, input_path, output_path, use_gpu=False, cpu_preset="medium", cpu_crf=23, cpu_threads="auto"
