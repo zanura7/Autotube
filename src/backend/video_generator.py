@@ -289,8 +289,15 @@ class VideoGenerator:
 
             with open(list_file, "w", encoding="utf-8") as f:
                 for audio_file in audio_files:
-                    # Use absolute path
-                    f.write(f"file '{audio_file.absolute()}'\n")
+                    # Use absolute path with proper escaping for Windows
+                    # Convert backslashes to forward slashes for FFmpeg compatibility
+                    abs_path = str(audio_file.absolute()).replace('\\', '/')
+                    # Escape single quotes in filename
+                    abs_path = abs_path.replace("'", "'\\''")
+                    f.write(f"file '{abs_path}'\n")
+
+            self.log(f"📝 Created concat list: {list_file}")
+            self.log(f"📋 Concatenating {len(audio_files)} audio files...")
 
             # Use FFmpeg concat demuxer with re-encoding for compatibility
             # Using copy can fail if audio codecs/bitrates differ
@@ -328,14 +335,26 @@ class VideoGenerator:
             return temp_audio
 
         except subprocess.CalledProcessError as e:
-            error_msg = e.stderr if e.stderr else str(e)
-            self.log(f"❌ FFmpeg error during audio concatenation:", "ERROR")
-            self.log(f"   {error_msg}", "ERROR")
+            self.log(f"❌ FFmpeg error during audio concatenation!", "ERROR")
+
+            # Show detailed error from FFmpeg
+            if e.stderr:
+                self.log(f"📋 FFmpeg stderr output:", "ERROR")
+                # Show last 20 lines for context
+                error_lines = e.stderr.strip().split('\n')
+                for line in error_lines[-20:]:
+                    if line.strip():
+                        self.log(f"   {line}", "ERROR")
+
+            # Show the command that failed
+            self.log(f"💻 Command: {' '.join(e.cmd)}", "ERROR")
+
             # Cleanup list file on error
             try:
                 list_file = self.output_folder / "audio_list.txt"
                 if list_file.exists():
-                    list_file.unlink()
+                    # Don't delete - keep for debugging
+                    self.log(f"📄 Audio list file saved for debugging: {list_file}", "WARNING")
             except:
                 pass
             return None
