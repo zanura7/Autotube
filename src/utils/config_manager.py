@@ -64,6 +64,8 @@ class ConfigManager:
                 "show_notifications": True,
                 "max_log_file_size_mb": 10,
                 "max_log_files": 5,
+                "check_for_updates": True,  # Auto-check for updates on startup
+                "skipped_version": None,  # Version user chose to skip
             },
         }
 

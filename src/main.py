@@ -16,6 +16,8 @@ from utils.ffmpeg_checker import check_ffmpeg
 from utils.config_manager import ConfigManager
 from utils.file_logger import init_file_logger, close_file_logger
 from utils.notifications import init_notifier
+from __version__ import __version__, GITHUB_REPO
+from utils.auto_updater import check_for_updates_simple
 
 
 def main():
@@ -56,16 +58,52 @@ def main():
         sys.exit(1)
 
     print("✅ FFmpeg terdeteksi!")
-    print("🚀 Memulai Autotube...\n")
+    print(f"📦 Autotube v{__version__}")
 
     if file_logger:
         file_logger.info("FFmpeg detected successfully")
+        file_logger.info(f"Autotube version: {__version__}")
         file_logger.info(f"Config file: {config.get_config_file_path()}")
         file_logger.info(f"Log file: {file_logger.get_log_file_path()}")
 
+    # Check for updates (if enabled in config)
+    check_updates = general_settings.get("check_for_updates", True)
+    if check_updates:
+        print("🔍 Checking for updates...")
+        if file_logger:
+            file_logger.info("Checking for updates...")
+
+        try:
+            has_update, latest_version = check_for_updates_simple(__version__, GITHUB_REPO)
+            if has_update:
+                print(f"✨ New version available: v{latest_version} (current: v{__version__})")
+                if file_logger:
+                    file_logger.info(f"Update available: v{latest_version}")
+
+                # Show notification
+                if notifier:
+                    try:
+                        from utils.notifications import notify_success
+                        notify_success(
+                            "Update Available",
+                            f"Autotube v{latest_version} is available!"
+                        )
+                    except:
+                        pass
+            else:
+                print("✅ You're using the latest version")
+                if file_logger:
+                    file_logger.info("Application is up to date")
+        except Exception as e:
+            print(f"⚠️  Could not check for updates: {e}")
+            if file_logger:
+                file_logger.warning(f"Update check failed: {e}")
+
+    print("🚀 Memulai Autotube...\n")
+
     try:
-        # Create and run the main window (pass config to it)
-        app = MainWindow(config=config)
+        # Create and run the main window (pass config and version to it)
+        app = MainWindow(config=config, version=__version__)
         app.run()
 
     except KeyboardInterrupt:

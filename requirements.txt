@@ -18,3 +18,7 @@ ffmpeg-normalize>=1.27.0
 
 # Notifications
 plyer>=2.1.0
+
+# Auto-Update
+requests>=2.31.0
+packaging>=23.0

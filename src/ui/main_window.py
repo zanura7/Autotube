@@ -12,14 +12,16 @@ from .mode_c_tab import ModeCTab
 class MainWindow:
     """Main application window with 3-mode tabs"""
 
-    def __init__(self, config=None):
+    def __init__(self, config=None, version="1.0.0"):
         """
         Initialize main window
 
         Args:
             config: ConfigManager instance
+            version: Application version
         """
         self.config = config
+        self.version = version
 
         # Set appearance
         ctk.set_appearance_mode("dark")
@@ -27,7 +29,7 @@ class MainWindow:
 
         # Create main window
         self.root = ctk.CTk()
-        self.root.title("Autotube - YouTube Content Creator")
+        self.root.title(f"Autotube v{version} - YouTube Content Creator")
         self.root.geometry("1000x700")
 
         # Create main container
@@ -36,13 +38,28 @@ class MainWindow:
     def setup_ui(self):
         """Setup the main UI layout"""
 
-        # Header
+        # Header frame
+        header_frame = ctk.CTkFrame(self.root)
+        header_frame.pack(fill="x", pady=10)
+
+        # Header label
         header = ctk.CTkLabel(
-            self.root,
+            header_frame,
             text="🎬 Autotube - YouTube Long-Form Content Creator",
             font=ctk.CTkFont(size=20, weight="bold"),
         )
-        header.pack(pady=10)
+        header.pack(side="left", padx=20)
+
+        # Update button
+        update_btn = ctk.CTkButton(
+            header_frame,
+            text=f"v{self.version} - Check Updates",
+            font=ctk.CTkFont(size=10),
+            width=150,
+            height=30,
+            command=self.check_for_updates_manual,
+        )
+        update_btn.pack(side="right", padx=20)
 
         # Tabview for 3 modes
         self.tabview = ctk.CTkTabview(self.root)
@@ -93,6 +110,69 @@ class MainWindow:
         # Create the Mode C tab UI
         mode_c = ModeCTab(self.tab_mode_c, self.console, config=self.config)
         mode_c.pack(fill="both", expand=True)
+
+    def check_for_updates_manual(self):
+        """Manually check for updates (triggered by button)"""
+        import threading
+        from __version__ import GITHUB_REPO
+        from utils.auto_updater import AutoUpdater
+        from .update_dialog import show_update_dialog, perform_update_with_dialog
+
+        def check_updates_thread():
+            """Check for updates in background thread"""
+            self.console.log("🔍 Checking for updates...")
+
+            updater = AutoUpdater(self.version, GITHUB_REPO)
+            has_update, latest_version, release_data = updater.check_for_updates()
+
+            if not has_update:
+                self.console.log("✅ You're already using the latest version!", "SUCCESS")
+                return
+
+            # Get release notes
+            release_notes = release_data.get("body", "No release notes available")
+
+            # Show update dialog (must run on main thread)
+            def show_dialog():
+                choice = show_update_dialog(
+                    self.root,
+                    self.version,
+                    latest_version,
+                    release_notes
+                )
+
+                if choice == "update":
+                    self.console.log(f"📥 Downloading update to v{latest_version}...")
+                    # Perform update with progress dialog
+                    success = perform_update_with_dialog(
+                        self.root,
+                        updater,
+                        self.version,
+                        latest_version
+                    )
+
+                    if success:
+                        self.console.log("✅ Update installed! Restarting...", "SUCCESS")
+                        # Application will restart automatically
+                        self.root.quit()
+                    else:
+                        self.console.log("❌ Update failed. Please try again.", "ERROR")
+
+                elif choice == "skip":
+                    self.console.log(f"⏭️  Skipping version {latest_version}", "WARNING")
+                    # Save skipped version in config
+                    if self.config:
+                        self.config.set("general", "skipped_version", latest_version)
+                        self.config.save_config()
+                else:
+                    self.console.log("⏸️  Update postponed", "INFO")
+
+            # Run dialog on main thread
+            self.root.after(0, show_dialog)
+
+        # Start check in background thread
+        thread = threading.Thread(target=check_updates_thread, daemon=True)
+        thread.start()
 
     def run(self):
         """Start the main event loop"""
