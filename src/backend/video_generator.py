@@ -97,12 +97,33 @@ class VideoGenerator:
 
             temp_audio = self.concatenate_audio(audio_files)
 
+            # Check if audio concatenation succeeded
+            if not temp_audio or not temp_audio.exists():
+                self.log("❌ Failed to concatenate audio files!", "ERROR")
+                try:
+                    from utils.notifications import notify_error
+                    notify_error("Video Generation Failed", "Failed to concatenate audio files")
+                except:
+                    pass
+                return False
+
             # Step 4: Prepare visual
             self.log("🖼️  Preparing visual...")
             if progress_callback:
                 progress_callback(0.6, "Preparing visual...")
 
             visual_path = Path(visual_path)
+
+            # Validate visual file exists
+            if not visual_path.exists():
+                self.log(f"❌ Visual file not found: {visual_path}", "ERROR")
+                try:
+                    from utils.notifications import notify_error
+                    notify_error("Video Generation Failed", f"Visual file not found: {visual_path.name}")
+                except:
+                    pass
+                return False
+
             is_image = visual_path.suffix.lower() in [".png", ".jpg", ".jpeg"]
 
             # Step 5: Generate output filename
@@ -143,6 +164,17 @@ class VideoGenerator:
                 self.log(f"⚠️  Warning: Could not delete temp file: {e}", "WARNING")
 
             self.log(f"✅ Video created successfully: {output_file.name}", "SUCCESS")
+
+            # Send desktop notification
+            try:
+                from utils.notifications import notify_success
+                notify_success(
+                    "Video Created Successfully",
+                    f"Final video saved: {output_file.name}"
+                )
+            except:
+                pass  # Ignore notification errors
+
             if progress_callback:
                 progress_callback(1.0, "Complete!")
 
@@ -150,6 +182,13 @@ class VideoGenerator:
 
         except Exception as e:
             self.log(f"❌ Error generating video: {str(e)}", "ERROR")
+
+            # Send error notification
+            try:
+                from utils.notifications import notify_error
+                notify_error("Video Generation Failed", str(e))
+            except:
+                pass
 
             # Cleanup temp files on error
             try:
@@ -273,16 +312,42 @@ class VideoGenerator:
                 str(temp_audio),
             ]
 
-            subprocess.run(cmd, check=True, capture_output=True, text=True)
+            result = subprocess.run(cmd, check=True, capture_output=True, text=True)
+
+            # Check if output file was created
+            if not temp_audio.exists():
+                self.log("❌ Audio concatenation failed: output file not created", "ERROR")
+                self.log(f"FFmpeg output: {result.stderr}", "ERROR")
+                return None
 
             # Cleanup list file after successful concat
             if list_file.exists():
                 list_file.unlink()
 
+            self.log(f"✅ Successfully concatenated {len(audio_files)} audio files")
             return temp_audio
 
+        except subprocess.CalledProcessError as e:
+            error_msg = e.stderr if e.stderr else str(e)
+            self.log(f"❌ FFmpeg error during audio concatenation:", "ERROR")
+            self.log(f"   {error_msg}", "ERROR")
+            # Cleanup list file on error
+            try:
+                list_file = self.output_folder / "audio_list.txt"
+                if list_file.exists():
+                    list_file.unlink()
+            except:
+                pass
+            return None
         except Exception as e:
             self.log(f"❌ Error concatenating audio: {str(e)}", "ERROR")
+            # Cleanup list file on error
+            try:
+                list_file = self.output_folder / "audio_list.txt"
+                if list_file.exists():
+                    list_file.unlink()
+            except:
+                pass
             return None
 
     def render_video(
@@ -311,6 +376,15 @@ class VideoGenerator:
             bool: True if successful
         """
         try:
+            # Validate inputs
+            if not audio_path or not Path(audio_path).exists():
+                self.log(f"❌ Audio file not found: {audio_path}", "ERROR")
+                return False
+
+            if not visual_path or not Path(visual_path).exists():
+                self.log(f"❌ Visual file not found: {visual_path}", "ERROR")
+                return False
+
             width, height = map(int, resolution.split("x"))
 
             if is_image:
@@ -354,16 +428,32 @@ class VideoGenerator:
             )
 
             # Run FFmpeg
+            self.log(f"🎬 Running FFmpeg to render final video...")
             ffmpeg.run(output, overwrite_output=True, capture_stdout=True, capture_stderr=True)
 
-            return output_path.exists()
+            # Verify output was created
+            if not output_path.exists():
+                self.log("❌ Rendering failed: output file not created", "ERROR")
+                return False
+
+            file_size_mb = output_path.stat().st_size / (1024 * 1024)
+            self.log(f"✅ Video rendered successfully ({file_size_mb:.2f} MB)")
+
+            return True
 
         except ffmpeg.Error as e:
             error_message = e.stderr.decode() if e.stderr else str(e)
-            self.log(f"FFmpeg error: {error_message}", "ERROR")
+            self.log(f"❌ FFmpeg error during video rendering:", "ERROR")
+            # Show last 10 lines of error for clarity
+            error_lines = error_message.split('\n')
+            for line in error_lines[-10:]:
+                if line.strip():
+                    self.log(f"   {line}", "ERROR")
             return False
         except Exception as e:
-            self.log(f"Render error: {str(e)}", "ERROR")
+            self.log(f"❌ Render error: {str(e)}", "ERROR")
+            import traceback
+            self.log(f"   {traceback.format_exc()}", "ERROR")
             return False
 
     def save_chapters(self, chapters, video_file):
