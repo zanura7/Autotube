@@ -68,7 +68,12 @@ python src/main.py
 4. **Set Duration:** Enter target duration in minutes (e.g., 60 for 1 hour)
 5. **Choose Resolution:** Select output resolution (1080p, 720p, 4K, or Original)
 6. **Crossfade Duration:** Set transition smoothness (default: 1.0 second)
-7. **GPU Acceleration:** Enable if you have NVIDIA GPU (faster rendering)
+7. **Performance Settings:**
+   - **GPU Acceleration:** Enable if you have NVIDIA GPU (faster rendering)
+   - **CPU Settings** (shown when GPU is off):
+     - **Speed Preset:** ultrafast (fastest, larger file) to slow (slowest, smaller file)
+     - **Quality (CRF):** 18 (best quality) to 28 (lower quality, faster)
+     - **CPU Threads:** auto or manual selection (2, 4, 6, 8)
 8. **Output Folder:** Choose where to save the result
 9. Click **"🎬 Render Loop"**
 
@@ -187,6 +192,14 @@ python src/main.py
 - **Choose seamless content:** Abstract patterns, water, clouds work great
 - **Crossfade duration:** 1-2 seconds prevents visible jumps
 - **GPU acceleration:** Speeds up rendering significantly (NVIDIA only)
+- **CPU Settings for slower PCs:**
+  - Use **ultrafast** or **veryfast** preset for quick rendering
+  - Use **CRF 28** for faster encoding (slightly lower quality)
+  - Set threads to match your CPU cores (check with Task Manager/htop)
+- **CPU Settings for best quality:**
+  - Use **slow** preset for smallest file size
+  - Use **CRF 18** for best quality
+  - Leave threads on **auto** for optimal performance
 
 ### For Mode B (Downloader):
 - **Always normalize audio** for consistent listening experience
@@ -219,9 +232,19 @@ python src/main.py
 
 ### Video rendering is slow
 - Enable GPU acceleration (Mode A) if you have NVIDIA GPU
-- Lower output resolution
+- **For CPU rendering:**
+  - Use **ultrafast** or **veryfast** preset (much faster)
+  - Use **CRF 28** for faster encoding
+  - Reduce threads if your PC is struggling (try 2 or 4)
+  - Lower output resolution (720p instead of 1080p)
 - Use shorter crossfade duration
 - Close other applications
+
+### PC freezes or becomes unresponsive during rendering
+- Reduce CPU threads (try 2 or 4 instead of auto)
+- Use **fast** or **veryfast** preset
+- Lower the resolution
+- Don't run other heavy applications during rendering
 
 ### Audio/Video out of sync
 - This is rare, but ensure:

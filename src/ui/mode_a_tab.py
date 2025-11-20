@@ -156,8 +156,85 @@ class ModeATab(ctk.CTkFrame):
             settings_frame,
             text="⚡ GPU Acceleration (NVIDIA only)",
             variable=self.gpu_var,
+            command=self.toggle_cpu_options,
         )
         gpu_check.grid(row=3, column=0, columnspan=2, padx=10, pady=5, sticky="w")
+
+        # CPU Performance Settings (only visible when GPU is off)
+        cpu_label = ctk.CTkLabel(
+            settings_frame,
+            text="⚙️ CPU Settings:",
+            font=ctk.CTkFont(size=11, weight="bold"),
+        )
+        cpu_label.grid(row=4, column=0, padx=10, pady=5, sticky="w")
+        self.cpu_label = cpu_label
+
+        # Encoding Speed
+        speed_label = ctk.CTkLabel(
+            settings_frame,
+            text="   Speed Preset:",
+            font=ctk.CTkFont(size=10),
+        )
+        speed_label.grid(row=5, column=0, padx=10, pady=2, sticky="w")
+        self.speed_label = speed_label
+
+        self.preset_var = ctk.StringVar(value="medium")
+        preset_menu = ctk.CTkOptionMenu(
+            settings_frame,
+            variable=self.preset_var,
+            values=["ultrafast", "superfast", "veryfast", "fast", "medium", "slow"],
+            width=150,
+        )
+        preset_menu.grid(row=5, column=1, padx=10, pady=2, sticky="w")
+        self.preset_menu = preset_menu
+
+        # Quality
+        quality_label = ctk.CTkLabel(
+            settings_frame,
+            text="   Quality (CRF):",
+            font=ctk.CTkFont(size=10),
+        )
+        quality_label.grid(row=6, column=0, padx=10, pady=2, sticky="w")
+        self.quality_label = quality_label
+
+        self.quality_var = ctk.StringVar(value="23")
+        quality_menu = ctk.CTkOptionMenu(
+            settings_frame,
+            variable=self.quality_var,
+            values=["18 (Best)", "23 (Good)", "28 (Faster)"],
+            width=150,
+        )
+        quality_menu.grid(row=6, column=1, padx=10, pady=2, sticky="w")
+        self.quality_menu = quality_menu
+
+        # Threads
+        threads_label = ctk.CTkLabel(
+            settings_frame,
+            text="   CPU Threads:",
+            font=ctk.CTkFont(size=10),
+        )
+        threads_label.grid(row=7, column=0, padx=10, pady=2, sticky="w")
+        self.threads_label = threads_label
+
+        self.threads_var = ctk.StringVar(value="auto")
+        threads_menu = ctk.CTkOptionMenu(
+            settings_frame,
+            variable=self.threads_var,
+            values=["auto", "2", "4", "6", "8"],
+            width=150,
+        )
+        threads_menu.grid(row=7, column=1, padx=10, pady=2, sticky="w")
+        self.threads_menu = threads_menu
+
+        # Help text
+        help_label = ctk.CTkLabel(
+            settings_frame,
+            text="   💡 Tip: ultrafast = cepat tapi ukuran besar | slow = lambat tapi ukuran kecil",
+            font=ctk.CTkFont(size=9),
+            text_color="gray",
+        )
+        help_label.grid(row=8, column=0, columnspan=3, padx=10, pady=2, sticky="w")
+        self.help_label = help_label
 
         # Output Folder
         output_label = ctk.CTkLabel(
@@ -165,7 +242,7 @@ class ModeATab(ctk.CTkFrame):
             text="📁 Output Folder:",
             font=ctk.CTkFont(size=11),
         )
-        output_label.grid(row=4, column=0, padx=10, pady=5, sticky="w")
+        output_label.grid(row=9, column=0, padx=10, pady=5, sticky="w")
 
         self.output_folder_var = ctk.StringVar(value="./output/loops")
         output_entry = ctk.CTkEntry(
@@ -173,7 +250,7 @@ class ModeATab(ctk.CTkFrame):
             textvariable=self.output_folder_var,
             width=300,
         )
-        output_entry.grid(row=4, column=1, padx=10, pady=5, sticky="w")
+        output_entry.grid(row=9, column=1, padx=10, pady=5, sticky="w")
 
         output_btn = ctk.CTkButton(
             settings_frame,
@@ -181,7 +258,7 @@ class ModeATab(ctk.CTkFrame):
             width=80,
             command=self.browse_output_folder,
         )
-        output_btn.grid(row=4, column=2, padx=5, pady=5)
+        output_btn.grid(row=9, column=2, padx=5, pady=5)
 
         # Progress Bar
         self.progress_bar = ctk.CTkProgressBar(container)
@@ -218,6 +295,30 @@ class ModeATab(ctk.CTkFrame):
             command=self.open_output_folder,
         )
         open_folder_btn.pack(side="left", padx=5)
+
+    def toggle_cpu_options(self):
+        """Toggle CPU options visibility based on GPU checkbox"""
+        gpu_enabled = self.gpu_var.get()
+
+        # Hide CPU options when GPU is enabled
+        if gpu_enabled:
+            self.cpu_label.grid_remove()
+            self.speed_label.grid_remove()
+            self.preset_menu.grid_remove()
+            self.quality_label.grid_remove()
+            self.quality_menu.grid_remove()
+            self.threads_label.grid_remove()
+            self.threads_menu.grid_remove()
+            self.help_label.grid_remove()
+        else:
+            self.cpu_label.grid()
+            self.speed_label.grid()
+            self.preset_menu.grid()
+            self.quality_label.grid()
+            self.quality_menu.grid()
+            self.threads_label.grid()
+            self.threads_menu.grid()
+            self.help_label.grid()
 
     def browse_video(self):
         """Browse for input video"""
@@ -320,6 +421,13 @@ class ModeATab(ctk.CTkFrame):
         crossfade = float(self.crossfade_var.get())
         use_gpu = self.gpu_var.get()
 
+        # Get CPU settings
+        preset = self.preset_var.get()
+        quality_str = self.quality_var.get()
+        # Extract CRF number from "18 (Best)" format
+        crf = int(quality_str.split()[0])
+        threads = self.threads_var.get()
+
         # Create loop creator
         loop_creator = LoopCreator(
             output_folder=output_folder,
@@ -334,6 +442,9 @@ class ModeATab(ctk.CTkFrame):
             resolution=resolution,
             audio_path=audio_path,
             use_gpu=use_gpu,
+            cpu_preset=preset,
+            cpu_crf=crf,
+            cpu_threads=threads,
             progress_callback=self.update_progress,
         )
 

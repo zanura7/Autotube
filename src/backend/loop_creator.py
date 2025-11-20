@@ -49,6 +49,9 @@ class LoopCreator:
         resolution="Original",
         audio_path=None,
         use_gpu=False,
+        cpu_preset="medium",
+        cpu_crf=23,
+        cpu_threads="auto",
         progress_callback=None,
     ):
         """
@@ -61,6 +64,9 @@ class LoopCreator:
             resolution: Output resolution (e.g., "1920x1080" or "Original")
             audio_path: Optional audio file to replace video audio
             use_gpu: Whether to use GPU acceleration
+            cpu_preset: CPU encoding preset (ultrafast to slow)
+            cpu_crf: CPU quality (18=best, 23=good, 28=faster)
+            cpu_threads: Number of CPU threads to use
             progress_callback: Callback for progress updates
 
         Returns:
@@ -131,7 +137,9 @@ class LoopCreator:
             if progress_callback:
                 progress_callback(0.9, "Rendering...")
 
-            success = self.render_final(final_video, output_file, use_gpu)
+            success = self.render_final(
+                final_video, output_file, use_gpu, cpu_preset, cpu_crf, cpu_threads
+            )
 
             if success:
                 self.log(f"✅ Loop created successfully: {output_file.name}", "SUCCESS")
@@ -201,7 +209,9 @@ class LoopCreator:
         """Add or replace audio track"""
         return video_path
 
-    def render_final(self, input_path, output_path, use_gpu=False):
+    def render_final(
+        self, input_path, output_path, use_gpu=False, cpu_preset="medium", cpu_crf=23, cpu_threads="auto"
+    ):
         """
         Render final video
 
@@ -209,6 +219,9 @@ class LoopCreator:
             input_path: Input video path
             output_path: Output video path
             use_gpu: Whether to use GPU acceleration
+            cpu_preset: CPU encoding preset (only used if GPU is disabled)
+            cpu_crf: CPU quality setting (only used if GPU is disabled)
+            cpu_threads: Number of CPU threads (only used if GPU is disabled)
 
         Returns:
             bool: True if successful
@@ -230,12 +243,18 @@ class LoopCreator:
                 }
                 self.log("⚡ Using GPU acceleration (NVIDIA)")
             else:
-                # CPU encoding
+                # CPU encoding with user-defined settings
                 video_codec = "libx264"
                 codec_params = {
-                    "preset": "medium",
-                    "crf": "23",
+                    "preset": cpu_preset,
+                    "crf": str(cpu_crf),
                 }
+
+                # Add threads if not auto
+                if cpu_threads != "auto":
+                    codec_params["threads"] = cpu_threads
+
+                self.log(f"💻 Using CPU encoding (preset={cpu_preset}, crf={cpu_crf}, threads={cpu_threads})")
 
             # Output settings
             output_stream = ffmpeg.output(
