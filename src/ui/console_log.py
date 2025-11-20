@@ -7,7 +7,7 @@ from datetime import datetime
 
 
 class ConsoleLog(ctk.CTkTextbox):
-    """Custom console log widget with auto-scroll"""
+    """Custom console log widget with auto-scroll and file logging"""
 
     def __init__(self, master, **kwargs):
         # Set default height if not provided
@@ -52,6 +52,15 @@ class ConsoleLog(ctk.CTkTextbox):
 
         # Make it read-only again
         self.configure(state="disabled")
+
+        # Also log to file if file logger is available
+        try:
+            from utils.file_logger import get_file_logger
+            file_logger = get_file_logger()
+            if file_logger:
+                file_logger.log(message, level)
+        except:
+            pass  # Silently fail if file logger not available
 
     def clear(self):
         """Clear all log messages"""

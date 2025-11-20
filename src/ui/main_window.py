@@ -12,7 +12,15 @@ from .mode_c_tab import ModeCTab
 class MainWindow:
     """Main application window with 3-mode tabs"""
 
-    def __init__(self):
+    def __init__(self, config=None):
+        """
+        Initialize main window
+
+        Args:
+            config: ConfigManager instance
+        """
+        self.config = config
+
         # Set appearance
         ctk.set_appearance_mode("dark")
         ctk.set_default_color_theme("blue")
@@ -71,19 +79,19 @@ class MainWindow:
     def setup_mode_a(self):
         """Setup Mode A: Loop Creator tab"""
         # Create the Mode A tab UI
-        mode_a = ModeATab(self.tab_mode_a, self.console)
+        mode_a = ModeATab(self.tab_mode_a, self.console, config=self.config)
         mode_a.pack(fill="both", expand=True)
 
     def setup_mode_b(self):
         """Setup Mode B: Downloader tab"""
         # Create the Mode B tab UI
-        mode_b = ModeBTab(self.tab_mode_b, self.console)
+        mode_b = ModeBTab(self.tab_mode_b, self.console, config=self.config)
         mode_b.pack(fill="both", expand=True)
 
     def setup_mode_c(self):
         """Setup Mode C: Generator tab"""
         # Create the Mode C tab UI
-        mode_c = ModeCTab(self.tab_mode_c, self.console)
+        mode_c = ModeCTab(self.tab_mode_c, self.console, config=self.config)
         mode_c.pack(fill="both", expand=True)
 
     def run(self):

@@ -1,6 +1,6 @@
 """
 Mass Downloader Backend using yt-dlp
-Supports audio/video download with normalization
+Supports audio/video download with normalization and concurrent downloads
 """
 
 import yt_dlp
@@ -10,6 +10,8 @@ from datetime import datetime
 import json
 import sys
 import os
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import threading
 
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -48,15 +50,16 @@ class Downloader:
         else:
             print(f"[{level}] {message}")
 
-    def download_batch(self, urls, format_type="mp3_320", normalize=True, progress_callback=None):
+    def download_batch(self, urls, format_type="mp3_320", normalize=True, progress_callback=None, max_concurrent=3):
         """
-        Download multiple URLs
+        Download multiple URLs with concurrent downloads
 
         Args:
             urls: List of URLs to download
             format_type: Format type (mp3_320, mp3_128, video_best)
             normalize: Whether to normalize audio
             progress_callback: Callback function for progress updates
+            max_concurrent: Maximum number of concurrent downloads (default: 3, max: 5)
 
         Returns:
             bool: True if successful, False otherwise
@@ -76,20 +79,31 @@ class Downloader:
             return False
 
         total = len(valid_urls)
-        self.log(f"🚀 Memulai download {total} file (dari {len(urls)} URLs)...")
 
-        for index, url in enumerate(valid_urls, 1):
+        # Limit concurrent downloads to max 5
+        max_concurrent = min(max_concurrent, 5)
+        max_concurrent = max(max_concurrent, 1)  # At least 1
+
+        self.log(f"🚀 Starting download of {total} files ({max_concurrent} concurrent downloads)...")
+
+        # Thread-safe counter for progress
+        completed_count = 0
+        count_lock = threading.Lock()
+
+        def download_task(url, index):
+            """Download a single URL (runs in thread)"""
+            nonlocal completed_count
+
             try:
-                if progress_callback:
-                    progress_callback(index - 1, total, f"Downloading {index}/{total}")
-
                 self.log(f"⬇️ [{index}/{total}] Downloading: {url}")
 
                 # Download with timeout
                 file_path = self.download_single(url, format_type)
 
                 if file_path and file_path.exists():
-                    self.downloaded_files.append(file_path)
+                    with count_lock:
+                        self.downloaded_files.append(file_path)
+
                     self.log(f"✅ Downloaded: {file_path.name}", "SUCCESS")
 
                     # Normalize if audio and requested
@@ -99,8 +113,11 @@ class Downloader:
                             self.log(f"✅ Audio normalized", "SUCCESS")
                         else:
                             self.log(f"⚠️  Audio normalization skipped", "WARNING")
+
+                    return True, file_path
                 else:
                     self.log(f"⚠️  Download failed or file not found", "WARNING")
+                    return False, None
 
             except Exception as e:
                 self.log(f"❌ Error downloading {url}: {str(e)}", "ERROR")
@@ -112,12 +129,41 @@ class Downloader:
                 except:
                     pass
 
-                continue
+                return False, None
+
+        # Use ThreadPoolExecutor for concurrent downloads
+        with ThreadPoolExecutor(max_workers=max_concurrent) as executor:
+            # Submit all download tasks
+            future_to_url = {
+                executor.submit(download_task, url, idx): (url, idx)
+                for idx, url in enumerate(valid_urls, 1)
+            }
+
+            # Process completed downloads
+            for future in as_completed(future_to_url):
+                url, idx = future_to_url[future]
+
+                try:
+                    success, file_path = future.result()
+
+                    with count_lock:
+                        completed_count += 1
+
+                    if progress_callback:
+                        progress_callback(completed_count, total, f"Downloaded {completed_count}/{total}")
+
+                except Exception as e:
+                    self.log(f"❌ Unexpected error for {url}: {str(e)}", "ERROR")
+                    with count_lock:
+                        completed_count += 1
+
+                    if progress_callback:
+                        progress_callback(completed_count, total, f"Downloaded {completed_count}/{total}")
 
         if progress_callback:
             progress_callback(total, total, "Complete")
 
-        self.log(f"✅ Download selesai! {len(self.downloaded_files)}/{total} berhasil", "SUCCESS")
+        self.log(f"✅ Download complete! {len(self.downloaded_files)}/{total} successful", "SUCCESS")
 
         return len(self.downloaded_files) > 0
 

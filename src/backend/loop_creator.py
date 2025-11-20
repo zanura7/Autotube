@@ -101,7 +101,7 @@ class LoopCreator:
                 progress_callback(0.3, "Creating crossfade...")
 
             crossfade_video = self.create_crossfade_clip(
-                video_path, crossfade_duration, use_gpu
+                video_path, crossfade_duration, use_gpu, progress_callback, cancel_event
             )
 
             # Step 4: Create loop by concatenating
@@ -130,7 +130,7 @@ class LoopCreator:
                 if progress_callback:
                     progress_callback(0.7, "Scaling video...")
 
-                final_video = self.scale_video(looped_video, resolution, use_gpu)
+                final_video = self.scale_video(looped_video, resolution, use_gpu, progress_callback, cancel_event)
 
             # Step 6: Add audio if provided
             if cancel_event and cancel_event.is_set():
@@ -158,7 +158,7 @@ class LoopCreator:
                 progress_callback(0.9, "Rendering...")
 
             success = self.render_final(
-                final_video, output_file, use_gpu, cpu_preset, cpu_crf, cpu_threads
+                final_video, output_file, use_gpu, cpu_preset, cpu_crf, cpu_threads, progress_callback, cancel_event
             )
 
             # Cleanup temp files
@@ -213,7 +213,7 @@ class LoopCreator:
         except Exception as e:
             raise ValueError(f"Failed to get video info: {str(e)}")
 
-    def create_crossfade_clip(self, video_path, crossfade_duration, use_gpu=False):
+    def create_crossfade_clip(self, video_path, crossfade_duration, use_gpu=False, progress_callback=None, cancel_event=None):
         """
         Create a video clip with crossfade at the end
 
@@ -226,6 +226,8 @@ class LoopCreator:
             video_path: Path to input video
             crossfade_duration: Duration of crossfade in seconds
             use_gpu: Whether to use GPU (not used for crossfade)
+            progress_callback: Callback for progress updates
+            cancel_event: Event for cancellation
 
         Returns:
             Path: Path to crossfaded video (temp file)
@@ -264,15 +266,28 @@ class LoopCreator:
                 str(temp_output)
             ]
 
-            subprocess.run(cmd, check=True, capture_output=True, text=True)
+            # Use progress parser for real-time progress
+            from utils.ffmpeg_progress import run_ffmpeg_with_progress
+
+            def progress_wrapper(percentage, message, eta):
+                if progress_callback:
+                    # Map to 0.3-0.4 range (crossfade is 10% of total work)
+                    mapped_progress = 0.3 + (percentage * 0.1)
+                    progress_callback(mapped_progress, f"Creating crossfade... {message}")
+
+            success = run_ffmpeg_with_progress(
+                cmd,
+                total_duration=duration,
+                progress_callback=progress_wrapper,
+                cancel_event=cancel_event,
+                log_callback=self.log
+            )
+
+            if not success:
+                self.log(f"❌ Crossfade creation failed", "ERROR")
+                return video_path
 
             return temp_output
-
-        except subprocess.CalledProcessError as e:
-            error_msg = e.stderr if e.stderr else str(e)
-            self.log(f"❌ Crossfade creation failed: {error_msg}", "ERROR")
-            # Fall back to original video
-            return video_path
 
         except Exception as e:
             self.log(f"❌ Error creating crossfade: {str(e)}", "ERROR")
@@ -340,7 +355,7 @@ class LoopCreator:
                 concat_list.unlink()
             return video_path
 
-    def scale_video(self, video_path, resolution, use_gpu=False):
+    def scale_video(self, video_path, resolution, use_gpu=False, progress_callback=None, cancel_event=None):
         """
         Scale video to target resolution
 
@@ -348,6 +363,8 @@ class LoopCreator:
             video_path: Path to input video
             resolution: Target resolution (e.g., "1920x1080")
             use_gpu: Whether to use GPU acceleration
+            progress_callback: Callback for progress updates
+            cancel_event: Event for cancellation
 
         Returns:
             Path: Path to scaled video (temp file)
@@ -360,6 +377,10 @@ class LoopCreator:
         try:
             # Parse resolution
             width, height = map(int, resolution.split("x"))
+
+            # Get video duration for progress tracking
+            video_info = self.get_video_info(video_path)
+            duration = video_info["duration"]
 
             # Create temp output
             temp_output = self.output_folder / f"temp_scaled_{video_path.name}"
@@ -382,14 +403,28 @@ class LoopCreator:
                 str(temp_output)
             ]
 
-            subprocess.run(cmd, check=True, capture_output=True, text=True)
+            # Use progress parser for real-time progress
+            from utils.ffmpeg_progress import run_ffmpeg_with_progress
+
+            def progress_wrapper(percentage, message, eta):
+                if progress_callback:
+                    # Map to 0.7-0.8 range (scaling is 10% of total work)
+                    mapped_progress = 0.7 + (percentage * 0.1)
+                    progress_callback(mapped_progress, f"Scaling video... {message}")
+
+            success = run_ffmpeg_with_progress(
+                cmd,
+                total_duration=duration,
+                progress_callback=progress_wrapper,
+                cancel_event=cancel_event,
+                log_callback=self.log
+            )
+
+            if not success:
+                self.log(f"❌ Scaling failed", "ERROR")
+                return video_path
 
             return temp_output
-
-        except subprocess.CalledProcessError as e:
-            error_msg = e.stderr if e.stderr else str(e)
-            self.log(f"❌ Scaling failed: {error_msg}", "ERROR")
-            return video_path
 
         except Exception as e:
             self.log(f"❌ Error scaling video: {str(e)}", "ERROR")
@@ -488,7 +523,7 @@ class LoopCreator:
             pass  # Ignore all cleanup errors
 
     def render_final(
-        self, input_path, output_path, use_gpu=False, cpu_preset="medium", cpu_crf=23, cpu_threads="auto"
+        self, input_path, output_path, use_gpu=False, cpu_preset="medium", cpu_crf=23, cpu_threads="auto", progress_callback=None, cancel_event=None
     ):
         """
         Render final video
@@ -500,6 +535,8 @@ class LoopCreator:
             cpu_preset: CPU encoding preset (only used if GPU is disabled)
             cpu_crf: CPU quality setting (only used if GPU is disabled)
             cpu_threads: Number of CPU threads (only used if GPU is disabled)
+            progress_callback: Callback for progress updates
+            cancel_event: Event for cancellation
 
         Returns:
             bool: True if successful
@@ -507,52 +544,67 @@ class LoopCreator:
         try:
             # Get video info
             video_info = self.get_video_info(input_path)
+            duration = video_info["duration"]
 
-            # Build FFmpeg command
-            input_stream = ffmpeg.input(str(input_path))
+            # Build FFmpeg command manually for progress tracking
+            cmd = [
+                "ffmpeg",
+                "-i", str(input_path),
+            ]
 
             # Video codec settings
             if use_gpu:
                 # NVIDIA GPU acceleration
-                video_codec = "h264_nvenc"
-                codec_params = {
-                    "preset": "medium",
-                    "b:v": "8M",
-                }
+                cmd.extend([
+                    "-c:v", "h264_nvenc",
+                    "-preset", "medium",
+                    "-b:v", "8M",
+                ])
                 self.log("⚡ Using GPU acceleration (NVIDIA)")
             else:
                 # CPU encoding with user-defined settings
-                video_codec = "libx264"
-                codec_params = {
-                    "preset": cpu_preset,
-                    "crf": str(cpu_crf),
-                }
+                cmd.extend([
+                    "-c:v", "libx264",
+                    "-preset", cpu_preset,
+                    "-crf", str(cpu_crf),
+                ])
 
                 # Add threads if not auto
                 if cpu_threads != "auto":
-                    codec_params["threads"] = cpu_threads
+                    cmd.extend(["-threads", cpu_threads])
 
                 self.log(f"💻 Using CPU encoding (preset={cpu_preset}, crf={cpu_crf}, threads={cpu_threads})")
 
-            # Output settings
-            output_stream = ffmpeg.output(
-                input_stream,
-                str(output_path),
-                vcodec=video_codec,
-                acodec="aac",
-                audio_bitrate="192k",
-                **codec_params,
+            # Audio codec
+            cmd.extend([
+                "-c:a", "aac",
+                "-b:a", "192k",
+                "-y",
+                str(output_path)
+            ])
+
+            # Use progress parser for real-time progress
+            from utils.ffmpeg_progress import run_ffmpeg_with_progress
+
+            def progress_wrapper(percentage, message, eta):
+                if progress_callback:
+                    # Map to 0.9-1.0 range (final render is last 10% of total work)
+                    mapped_progress = 0.9 + (percentage * 0.1)
+                    progress_callback(mapped_progress, f"Rendering final video... {message}")
+
+            success = run_ffmpeg_with_progress(
+                cmd,
+                total_duration=duration,
+                progress_callback=progress_wrapper,
+                cancel_event=cancel_event,
+                log_callback=self.log
             )
 
-            # Run FFmpeg
-            ffmpeg.run(output_stream, overwrite_output=True, capture_stdout=True, capture_stderr=True)
+            if not success:
+                return False
 
             return output_path.exists()
 
-        except ffmpeg.Error as e:
-            error_message = e.stderr.decode() if e.stderr else str(e)
-            self.log(f"FFmpeg error: {error_message}", "ERROR")
-            return False
         except Exception as e:
             self.log(f"Render error: {str(e)}", "ERROR")
             return False

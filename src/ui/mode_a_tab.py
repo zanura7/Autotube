@@ -12,13 +12,15 @@ from pathlib import Path
 class ModeATab(ctk.CTkFrame):
     """Mode A: Loop Creator UI"""
 
-    def __init__(self, master, console_log):
+    def __init__(self, master, console_log, config=None):
         super().__init__(master)
         self.console_log = console_log
+        self.config = config
         self.is_rendering = False
         self.cancel_event = threading.Event()  # For cancellation
 
         self.setup_ui()
+        self._load_settings()
 
     def setup_ui(self):
         """Setup the Mode A UI"""
@@ -466,6 +468,9 @@ class ModeATab(ctk.CTkFrame):
         """Worker thread for rendering"""
         from backend.loop_creator import LoopCreator
 
+        # Save settings before rendering
+        self._save_settings()
+
         # Get settings
         video_path = Path(self.video_path_var.get())
         audio_path = Path(self.audio_path_var.get()) if self.audio_path_var.get() else None
@@ -511,8 +516,25 @@ class ModeATab(ctk.CTkFrame):
 
         if success:
             self.progress_label.configure(text="✅ Rendering complete!")
+
+            # Show success notification
+            try:
+                from utils.notifications import notify_success
+                notify_success(
+                    "Loop Created",
+                    f"Successfully created {duration//60} minute loop"
+                )
+            except:
+                pass
         else:
             self.progress_label.configure(text="❌ Rendering failed!")
+
+            # Show error notification
+            try:
+                from utils.notifications import notify_error
+                notify_error("Loop Creation Failed", "Check console log for details")
+            except:
+                pass
 
     def cancel_render(self):
         """Cancel the rendering process"""
@@ -527,3 +549,70 @@ class ModeATab(ctk.CTkFrame):
 
         if message:
             self.progress_label.configure(text=message)
+
+    def _load_settings(self):
+        """Load settings from config"""
+        if not self.config:
+            return
+
+        try:
+            settings = self.config.get_mode_a_settings()
+
+            # Load output folder
+            output_folder = settings.get("output_folder")
+            if output_folder:
+                self.output_folder_var.set(output_folder)
+
+            # Load duration
+            duration = settings.get("default_duration", 60)
+            self.duration_var.set(str(duration))
+
+            # Load resolution
+            resolution = settings.get("default_resolution", "1920x1080")
+            self.resolution_var.set(resolution)
+
+            # Load crossfade
+            crossfade = settings.get("default_crossfade", 1.0)
+            self.crossfade_var.set(str(crossfade))
+
+            # Load GPU setting
+            use_gpu = settings.get("use_gpu", False)
+            self.gpu_var.set(use_gpu)
+
+            # Load CPU settings
+            preset = settings.get("cpu_preset", "medium")
+            self.preset_var.set(preset)
+
+            crf = settings.get("cpu_crf", 23)
+            self.quality_var.set(f"{crf} (Good)")  # Map to dropdown format
+
+            threads = settings.get("cpu_threads", "auto")
+            self.threads_var.set(threads)
+
+            # Update UI visibility
+            self.toggle_cpu_options()
+
+        except Exception as e:
+            self.console_log.log_warning(f"Could not load settings: {e}")
+
+    def _save_settings(self):
+        """Save current settings to config"""
+        if not self.config:
+            return
+
+        try:
+            settings = {
+                "output_folder": self.output_folder_var.get(),
+                "default_duration": int(self.duration_var.get()),
+                "default_resolution": self.resolution_var.get(),
+                "default_crossfade": float(self.crossfade_var.get()),
+                "use_gpu": self.gpu_var.get(),
+                "cpu_preset": self.preset_var.get(),
+                "cpu_crf": int(self.quality_var.get().split()[0]),  # Extract number from "23 (Good)"
+                "cpu_threads": self.threads_var.get(),
+            }
+
+            self.config.update_mode_a_settings(settings)
+
+        except Exception as e:
+            self.console_log.log_warning(f"Could not save settings: {e}")

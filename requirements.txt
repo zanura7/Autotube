@@ -15,3 +15,6 @@ Pillow>=10.0.0
 
 # Audio Normalization
 ffmpeg-normalize>=1.27.0
+
+# Notifications
+plyer>=2.1.0
