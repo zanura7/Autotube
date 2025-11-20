@@ -1,0 +1,17 @@
+# UI Framework
+customtkinter>=5.2.0
+
+# Media Processing
+ffmpeg-python>=0.2.0
+
+# Video/Audio Downloader
+yt-dlp>=2023.10.13
+
+# Audio Processing
+pydub>=0.25.1
+
+# Image Processing
+Pillow>=10.0.0
+
+# Audio Normalization
+ffmpeg-normalize>=1.27.0
