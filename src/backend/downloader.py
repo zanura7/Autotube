@@ -10,6 +10,7 @@ from datetime import datetime
 import json
 import sys
 import os
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 
@@ -32,6 +33,10 @@ class Downloader:
         self.output_folder = Path(output_folder)
         self.console_log = console_log
         self.downloaded_files = []
+
+        # Thread-safe file locks for normalization
+        self.file_locks = {}
+        self.file_locks_lock = threading.Lock()
 
         # Create output folder if it doesn't exist
         self.output_folder.mkdir(parents=True, exist_ok=True)
@@ -66,9 +71,21 @@ class Downloader:
         """
         self.downloaded_files = []
 
+        # Deduplicate URLs (remove duplicates while preserving order)
+        seen = set()
+        unique_urls = []
+        for url in urls:
+            if url not in seen:
+                seen.add(url)
+                unique_urls.append(url)
+
+        duplicates_removed = len(urls) - len(unique_urls)
+        if duplicates_removed > 0:
+            self.log(f"🔍 Removed {duplicates_removed} duplicate URL(s)", "INFO")
+
         # Validate and filter URLs
         valid_urls = []
-        for url in urls:
+        for url in unique_urls:
             if validate_youtube_url(url):
                 valid_urls.append(url)
             else:
@@ -170,30 +187,38 @@ class Downloader:
     def download_single(self, url, format_type="mp3_320"):
         """
         Download a single URL
+        Skips download if file already exists
 
         Args:
             url: URL to download
             format_type: Format type
 
         Returns:
-            Path: Path to downloaded file
+            Path: Path to downloaded file, or None if already exists/failed
         """
         # Configure yt-dlp options
         ydl_opts = self._get_ydl_options(format_type)
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            # Get info first
+            # Get info first to determine filename
             info = ydl.extract_info(url, download=False)
             filename = ydl.prepare_filename(info)
-
-            # Download
-            ydl.download([url])
 
             # For MP3, the extension will be changed
             if format_type.startswith("mp3"):
                 filename = Path(filename).with_suffix(".mp3")
+            else:
+                filename = Path(filename)
 
-            return Path(filename)
+            # Check if file already exists
+            if filename.exists():
+                self.log(f"⏭️ File already exists, skipping: {filename.name}", "INFO")
+                return filename
+
+            # Download
+            ydl.download([url])
+
+            return filename
 
     def _get_ydl_options(self, format_type):
         """Get yt-dlp options based on format type"""
@@ -240,9 +265,27 @@ class Downloader:
 
         return base_opts
 
+    def _get_file_lock(self, file_path):
+        """
+        Get or create a thread lock for a specific file
+
+        Args:
+            file_path: Path to file
+
+        Returns:
+            threading.Lock: Lock for the file
+        """
+        file_key = str(file_path)
+
+        with self.file_locks_lock:
+            if file_key not in self.file_locks:
+                self.file_locks[file_key] = threading.Lock()
+            return self.file_locks[file_key]
+
     def normalize_audio(self, audio_file):
         """
         Normalize audio volume using FFmpeg loudnorm filter
+        Thread-safe with file locking and retry logic
 
         Args:
             audio_file: Path to audio file
@@ -252,6 +295,14 @@ class Downloader:
         """
         audio_file = Path(audio_file)
         temp_file = audio_file.with_suffix(".normalized.mp3")
+
+        # Get file-specific lock
+        file_lock = self._get_file_lock(audio_file)
+
+        # Try to acquire lock with timeout
+        if not file_lock.acquire(timeout=10):
+            self.log(f"⚠️  Normalization skipped: file locked by another thread", "WARNING")
+            return False
 
         try:
             # Use FFmpeg loudnorm filter for audio normalization
@@ -275,9 +326,28 @@ class Downloader:
                 timeout=300,  # 5 minute timeout
             )
 
-            # Replace original with normalized
-            temp_file.replace(audio_file)
-            return True
+            # Replace original with normalized (with retry logic for Windows)
+            max_retries = 3
+            for attempt in range(max_retries):
+                try:
+                    # On Windows, wait a moment for file handles to release
+                    if sys.platform == "win32":
+                        time.sleep(0.5)
+
+                    temp_file.replace(audio_file)
+                    return True
+
+                except PermissionError as e:
+                    if attempt < max_retries - 1:
+                        # Wait with exponential backoff
+                        wait_time = 2 ** attempt
+                        self.log(f"⏳ File locked, retrying in {wait_time}s... (attempt {attempt + 1}/{max_retries})", "INFO")
+                        time.sleep(wait_time)
+                    else:
+                        self.log(f"⚠️  Warning: Could not replace file after {max_retries} attempts: {e}", "WARNING")
+                        if temp_file.exists():
+                            temp_file.unlink()
+                        return False
 
         except subprocess.TimeoutExpired:
             self.log(f"⚠️  Warning: Audio normalization timeout", "WARNING")
@@ -295,8 +365,15 @@ class Downloader:
         except Exception as e:
             self.log(f"⚠️  Warning: Unexpected error in normalization: {e}", "WARNING")
             if temp_file.exists():
-                temp_file.unlink()
+                try:
+                    temp_file.unlink()
+                except:
+                    pass
             return False
+
+        finally:
+            # Always release the lock
+            file_lock.release()
 
     def generate_playlist(self):
         """
