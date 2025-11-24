@@ -1,401 +1,337 @@
 # AUTOTUBE COPYWRITING
-## DAVID OGILVY STYLE
-### "The Father of Advertising" - Factual, Research-Based, Long Copy
+## GAYA DAVID OGILVY
+### "The Father of Advertising" - Berdasarkan Fakta, Detail, Informatif
 
 ---
 
 ## HEADLINE:
 
-**"Pada Test Independen dengan 127 Content Creator Indonesia, Autotube Terbukti Mengurangi Waktu Video Production Hingga 87% Dibanding Manual Editing—Tanpa Mengurangi Kualitas Output"**
+**"Software Desktop Gratis yang Bisa Bikin Video Loop Seamless dalam 30 Detik, Download Batch Puluhan Video Sekaligus, dan Gabungin Audio Jadi Video—Semua Jalan Offline di Komputer Sendiri"**
 
 ---
 
 ## SUBHEADLINE:
 
-*Software desktop gratis berbasis FFmpeg yang sama digunakan oleh YouTube dan Netflix untuk video processing. Kini tersedia untuk Windows dan Linux dengan dokumentasi lengkap dalam Bahasa Indonesia.*
+*Dibuat pakai FFmpeg dan yt-dlp—teknologi yang sama dipakai YouTube dan Netflix untuk proses video mereka. Sekarang bisa kamu pakai dengan interface yang mudah, dokumentasi lengkap Bahasa Indonesia.*
 
 ---
 
 ## BODY COPY:
 
-### FAKTA YANG PERLU ANDA KETAHUI TENTANG VIDEO AUTOMATION
+### FAKTA TENTANG CONTENT CREATION DI 2025
 
-Dalam industri content creation modern, waktu adalah aset paling berharga. Berdasarkan survey yang kami lakukan terhadap 300 content creator di Indonesia tahun 2024, kami menemukan fakta mengejutkan:
+Kalau kamu content creator, pasti tahu rasanya:
 
-**78% content creator menghabiskan lebih banyak waktu untuk technical editing dibanding creative work.**
+Waktu yang paling banyak habis bukan untuk mikir konten kreatif. Tapi untuk kerjaan teknis yang repetitif:
+- Download video satu-satu
+- Edit loop video manual
+- Normalize audio file per file
+- Compile audio jadi video panjang
 
-Lebih spesifik lagi:
-- Rata-rata 15.7 jam per minggu untuk repetitive tasks (download, cut, normalize audio)
-- 43% menggunakan software berbayar dengan biaya rata-rata Rp 650.000/bulan
-- 89% merasa frustrated dengan workflow yang tidak efisien
-- Hanya 23% yang merasa puas dengan tools yang mereka gunakan
+**Dan ini kerjaannya monoton. Membosankan. Tapi harus dikerjain.**
 
-**Inilah mengapa kami mengembangkan Autotube.**
+Masalahnya, kalau kamu pakai cara manual, bisa habis berjam-jam. Kalau pakai software berbayar, harus langganan bulanan yang lumayan mahal.
+
+**Makanya Autotube dibuat.**
 
 ---
 
 ### APA ITU AUTOTUBE?
 
-Autotube adalah software desktop automation yang dikembangkan khusus untuk content creator yang menghadapi tiga masalah spesifik:
+Autotube adalah software desktop automation untuk content creator yang punya 3 masalah spesifik:
 
-**1. Pembuatan Video Loop yang Seamless**
-Kebanyakan video yang di-loop akan terlihat potongannya. Transisi terlihat kasar. Autotube menggunakan algoritma crossfade otomatis yang menghasilkan loop sempurna dalam 30 detik.
+**1. Bikin Video Loop yang Mulus**
+Kalau loop video manual, pasti kelihatan potongannya. Transisi kasar. Autotube pakai algoritma crossfade otomatis yang bikin loop mulus dalam 30 detik.
 
-**2. Batch Download dengan Audio Normalization**
-Download manual satu-per-satu membuang waktu berharga. Autotube dapat mendownload 50+ video secara bersamaan dengan 3-5 concurrent threads, sekaligus menormalkan volume audio menggunakan Loudnorm filter standar industri (-16 LUFS).
+**2. Batch Download + Normalisasi Audio**
+Download satu-satu kan buang waktu. Autotube bisa download banyak video bersamaan (3-5 sekaligus), sekaligus normalkan volume audionya pakai Loudnorm filter.
 
-**3. Video Compilation dari Multiple Audio Files**
-Menggabungkan 30 file audio menjadi satu video compilation biasanya memakan waktu 3+ jam di timeline editor. Autotube melakukannya dalam 5 menit dengan concatenation otomatis.
-
----
-
-### TEKNOLOGI YANG TERBUKTI DI INDUSTRI
-
-Autotube tidak menggunakan teknologi eksperimental. Kami menggunakan **FFmpeg**—multimedia framework yang telah menjadi standar industri sejak 2000 dan digunakan oleh:
-
-- **YouTube** untuk processing dan encoding jutaan video per hari
-- **Netflix** untuk streaming optimization dan format conversion
-- **Facebook** untuk video uploads dan mobile optimization
-- **VLC Media Player** untuk playback compatibility
-- **Ratusan production studio** di Hollywood untuk post-production
-
-FFmpeg adalah teknologi open-source dengan lisensi LGPL yang legal dan transparan. Source code dapat diaudit oleh siapapun.
-
-Untuk download functionality, kami menggunakan **yt-dlp**—fork modern dari youtube-dl yang aktif di-maintain oleh komunitas developer global dengan 80,000+ stars di GitHub.
-
-**Ini bukan eksperimen. Ini teknologi production-grade yang sudah proven selama 20+ tahun.**
+**3. Gabungin Audio Jadi Video**
+Biasanya kalau mau gabungin 30 file audio jadi satu video panjang, kamu harus import manual, atur di timeline, render lama. Autotube bisa otomatis dalam beberapa menit.
 
 ---
 
-### TIGA MODE OPERASI YANG DIRANCANG BERDASARKAN RESEARCH
+### TEKNOLOGI YANG SUDAH TERUJI
 
-Dalam riset kami terhadap 300+ content creator, kami mengidentifikasi tiga repetitive tasks yang paling memakan waktu. Autotube dirancang untuk mengatasi ketiga masalah ini secara spesifik.
+Autotube nggak pakai teknologi baru yang belum jelas. Ini pakai **FFmpeg**—framework multimedia yang jadi standar industri sejak 2000 dan dipakai sama:
+
+- **YouTube** buat proses jutaan video tiap hari
+- **Netflix** buat streaming dan konversi format
+- **Facebook** buat optimize video mobile
+- **VLC Media Player** buat playback berbagai format
+- **Studio-studio produksi** buat post-production
+
+FFmpeg itu open-source dengan lisensi LGPL yang legal dan transparan. Source codenya bisa dilihat siapa aja.
+
+Buat download, pakai **yt-dlp**—versi modern dari youtube-dl yang aktif dirawat komunitas developer dengan 80,000+ stars di GitHub.
+
+**Ini bukan eksperimen. Ini teknologi production-grade yang udah proven 20+ tahun.**
+
+---
+
+### TIGA MODE YANG DIRANCANG SESUAI KEBUTUHAN
+
+Berdasarkan pengalaman sendiri sebagai content creator, Autotube punya 3 mode buat atasi masalah yang paling sering muncul.
 
 ---
 
 #### **MODE A: LOOP CREATOR**
-**Untuk: Background music loops, ambient videos, streaming backgrounds**
+**Buat: Background music loops, ambient videos, streaming backgrounds**
 
 **Masalah yang Dipecahkan:**
-Video yang di-loop secara manual memiliki "jump" yang terlihat jelas di titik perulangan. Ini mengganggu viewer experience dan terlihat tidak profesional.
+Video yang di-loop manual pasti ada "jump" yang kelihatan jelas pas video ulang. Ini ganggu penonton dan keliatan nggak profesional.
 
 **Solusi Teknis:**
-Autotube menganalisa video Anda dan menerapkan crossfade transition pada detik-detik terakhir video, memblend ending dengan beginning secara seamless.
+Autotube analisa video kamu dan terapin crossfade transition di detik-detik terakhir video, blend ending sama beginning biar mulus.
 
-**Spesifikasi Teknis:**
-- Input: MP4, MOV, AVI, MKV (semua format FFmpeg-compatible)
-- Crossfade duration: 0.5 - 3.0 detik (customizable)
-- Quality presets: Ultra (High bitrate), High, Medium
-- Processing time: 30-60 detik untuk video 10 menit
-- Output: MP4 H.264 dengan audio copy (no re-encoding audio)
+**Spesifikasi:**
+- Input: MP4, MOV, AVI, MKV (semua format yang kompatibel FFmpeg)
+- Durasi crossfade: 0.5 - 3.0 detik (bisa diatur)
+- Preset kualitas: Ultra, High, Medium
+- Waktu proses: sekitar 30-60 detik buat video 10 menit
+- Output: MP4 H.264 dengan audio copy (audio nggak di-encode ulang)
 
-**Result:**
-Video loop yang sempurna tanpa visible cuts. Transisi smooth yang tidak terdeteksi oleh viewer.
-
-**Test Results:**
-Dalam blind test dengan 50 responden, 94% tidak dapat mendeteksi loop point pada video yang diproses dengan Autotube crossfade 1 detik, dibandingkan dengan 89% yang langsung mendeteksi cut pada loop manual tanpa transition.
+**Hasil:**
+Video loop yang sempurna tanpa potongan kelihatan. Transisi smooth yang nggak kedeteksi penonton.
 
 ---
 
 #### **MODE B: MASS DOWNLOADER**
-**Untuk: Music compilation channels, podcast archives, educational content batching**
+**Buat: Music compilation channels, podcast archives, batch content**
 
 **Masalah yang Dipecahkan:**
-Download 50 video satu-per-satu memakan waktu 3-4 jam. Audio volume yang tidak konsisten membuat listening experience buruk.
+Download 50 video satu-satu bisa makan waktu 3-4 jam. Volume audio yang nggak konsisten bikin listening experience jelek.
 
 **Solusi Teknis:**
-Concurrent download dengan 3-5 threads simultan. Setiap file yang selesai didownload langsung di-normalize menggunakan FFmpeg Loudnorm filter ke standar -16 LUFS (standar streaming platforms).
+Download paralel dengan 3-5 threads simultan. Setiap file yang selesai download langsung di-normalize pakai FFmpeg Loudnorm filter.
 
-**Spesifikasi Teknis:**
-- Format support: MP3 320kbps, MP3 128kbps, MP4 best quality
-- Concurrent downloads: 3-5 simultan (configurable)
-- Audio normalization: Loudnorm filter I=-16 LUFS, TP=-1.5, LRA=11
-- URL deduplication: Otomatis skip duplicate URLs
-- File checking: Skip already downloaded files
-- Thread-safe operations: File locking untuk prevent corruption
-- Retry logic: Exponential backoff untuk network failures
-- Output: M3U playlist auto-generated
+**Spesifikasi:**
+- Format: MP3 320kbps, MP3 128kbps, MP4 kualitas terbaik
+- Download bersamaan: 3-5 simultan (bisa diatur)
+- Normalisasi audio: Loudnorm filter -16 LUFS
+- Deduplikasi URL: Otomatis skip URL duplikat
+- File checking: Skip file yang udah pernah didownload
+- Thread-safe: File locking buat cegah corrupt
+- Retry logic: Exponential backoff buat network failures
+- Output: Playlist M3U otomatis dibuat
 
-**Result:**
-50 video dengan volume konsisten dalam 20-30 menit, tanpa intervensi manual.
-
-**Test Results:**
-Dalam test dengan 100 URLs:
-- Manual download (satu-per-satu): 3 jam 24 menit
-- Autotube (3 concurrent): 28 menit
-- **Time saved: 87%**
-
-Volume consistency test: 100% file memiliki loudness -16±1 LUFS setelah normalization.
+**Hasil:**
+Puluhan video dengan volume konsisten dalam waktu jauh lebih singkat, tanpa intervensi manual.
 
 ---
 
 #### **MODE C: VIDEO GENERATOR**
-**Untuk: Music compilations, podcast episodes, study music channels, meditation videos**
+**Buat: Music compilations, podcast episodes, study music channels**
 
 **Masalah yang Dipecahkan:**
-Membuat video 2 jam dari 30 file audio memerlukan import manual, arrange timeline, add visual, render—total 3-4 jam kerja.
+Bikin video 2 jam dari 30 file audio butuh import manual, atur timeline, tambahin visual, render—total bisa 3-4 jam kerja.
 
 **Solusi Teknis:**
-Automatic audio concatenation dengan FFmpeg concat protocol. Smart handling untuk MP3 files dengan embedded album art. Single background visual (image atau video) untuk seluruh durasi.
+Concatenation audio otomatis pakai FFmpeg concat protocol. Handle MP3 dengan album art embedded. Satu visual background (gambar atau video) buat seluruh durasi.
 
-**Spesifikasi Teknis:**
+**Spesifikasi:**
 - Input audio: MP3, M4A, WAV (unlimited files)
-- Visual input: JPG, PNG, MP4, MOV (looped untuk match audio duration)
+- Visual input: JPG, PNG, MP4, MOV (di-loop sesuai durasi audio)
 - Output codec: AAC 192kbps 48kHz audio, H.264 video
-- Album art handling: Auto-detect dan ignore embedded images
-- Timeout protection: Smart calculation berdasarkan jumlah files
-- Progress logging: Real-time feedback untuk long operations
-- Output: MP4 ready untuk YouTube/social media upload
+- Album art handling: Deteksi dan ignore gambar embedded
+- Timeout protection: Perhitungan smart berdasarkan jumlah file
+- Progress logging: Feedback real-time buat operasi panjang
+- Output: MP4 siap upload YouTube/social media
 
-**Result:**
-Video compilation 2 jam dari 30+ audio files dalam 5-10 menit processing time.
-
-**Test Results:**
-30 MP3 files (total 110 menit audio):
-- Manual editing (Premiere/Vegas): 2 jam 45 menit
-- Autotube: 8 menit 32 detik
-- **Time saved: 95%**
+**Hasil:**
+Video compilation berjam-jam dari puluhan audio file dalam hitungan menit.
 
 ---
 
-### MENGAPA AUTOTUBE BERBEDA DARI ALTERNATIF LAIN?
+### PERBANDINGAN DENGAN ALTERNATIF
 
-Kami telah melakukan competitive analysis terhadap 12 software sejenis (baik gratis maupun berbayar). Berikut perbandingan berdasarkan 8 kriteria penting:
+Ini perbandingan objektif berdasarkan fitur yang ada:
 
-| Kriteria | Manual Editing (Premiere/Vegas) | Software Berbayar (Rata-rata) | Autotube |
-|----------|--------------------------------|------------------------------|----------|
-| **Biaya per tahun** | $0 (license) + waktu Anda | Rp 7.8 juta | **Rp 0** |
-| **Loop creation time** | 45 menit/video | 5-10 menit | **30 detik** |
-| **Batch download** | Tidak support | Ya (limit 10-50) | **Unlimited** |
-| **Audio normalization** | Manual per file | Otomatis | **Otomatis (Loudnorm)** |
-| **Video compilation** | 3+ jam | 30-60 menit | **5-10 menit** |
+| Kriteria | Editing Manual | Software Berbayar | Autotube |
+|----------|----------------|-------------------|----------|
+| **Biaya per tahun** | Rp 0 (tapi waktu kamu) | Rp 3-10 juta | **Rp 0** |
+| **Loop video** | 30-45 menit/video | 5-10 menit | **30 detik** |
+| **Batch download** | Nggak support | Ya (limit) | **Unlimited** |
+| **Normalisasi audio** | Manual per file | Otomatis | **Otomatis** |
 | **Privacy** | Data lokal | Server provider | **100% lokal** |
-| **Internet requirement** | Opsional | Mandatory | **Offline capable** |
-| **Watermark output** | Tidak | Ya (free tier) | **Tidak ada** |
-| **Open source** | Tidak | Tidak | **Ya (GitHub)** |
-| **Platform support** | Windows/Mac | Biasanya 1 platform | **Windows/Linux** |
-
-**Kesimpulan dari data:**
-Autotube mengkombinasikan kecepatan automation software berbayar dengan flexibility dan zero-cost dari open-source solution.
+| **Internet** | Opsional | Wajib | **Offline (kecuali download)** |
+| **Watermark** | Tidak | Ya (versi gratis) | **Tidak** |
+| **Open source** | Tidak | Tidak | **Ya** |
 
 ---
 
-### CREDIBILITY: SIAPA YANG MENGEMBANGKAN AUTOTUBE?
+### SIAPA YANG BUAT AUTOTUBE?
 
-Autotube dikembangkan oleh independent software developer dengan pengalaman 5+ tahun di video automation dan FFmpeg integration. Bukan startup yang bisa hilang besok. Bukan corporate software dengan agenda profit.
+Autotube dikembangkan sama independent developer yang juga content creator. Bukan startup yang bisa hilang besok. Bukan software korporat dengan agenda profit.
 
-**Filosofi kami simple:**
-Tools yang bagus seharusnya accessible untuk semua orang. Content creator tidak seharusnya dibebani dengan biaya subscription yang mahal hanya untuk mengotomasi repetitive tasks.
+**Filosofinya simpel:**
+Tools yang bagus seharusnya bisa diakses semua orang. Content creator nggak seharusnya dibebani biaya subscription mahal cuma buat otomasi kerjaan repetitif.
 
 **Transparansi penuh:**
-- Source code tersedia di GitHub untuk audit
-- Tidak ada telemetry atau data collection
-- Tidak ada "phone home" atau tracking
-- Tidak ada forced updates atau cloud dependency
-- Dokumentasi lengkap dalam Bahasa Indonesia
+- Source code ada di GitHub buat audit
+- Nggak ada telemetry atau data collection
+- Nggak ada "phone home" atau tracking
+- Nggak ada forced updates atau cloud dependency
+- Dokumentasi lengkap Bahasa Indonesia
 
 ---
 
-### SISTEM REQUIREMENT: DIRANCANG UNTUK KOMPUTER RATA-RATA
+### KEBUTUHAN SISTEM: DIBUAT BUAT KOMPUTER BIASA
 
-Kami tidak percaya software harus memaksa user untuk upgrade hardware. Autotube dirancang efficient dan lightweight.
+Software ini nggak maksa kamu buat upgrade hardware. Autotube dibuat efisien dan ringan.
 
-**Minimum Requirements:**
+**Kebutuhan Minimum:**
 - **OS:** Windows 10/11 atau Linux (Ubuntu 18.04+, Debian, Fedora)
-- **CPU:** Intel Core i3 generasi 7th atau AMD Ryzen 3 (atau equivalent)
-- **RAM:** 4GB (8GB recommended untuk batch processing besar)
-- **Storage:** 500MB untuk software + space untuk output files
-- **Graphics:** Tidak memerlukan dedicated GPU
+- **CPU:** Intel Core i3 gen 7 atau AMD Ryzen 3
+- **RAM:** 4GB (8GB recommended buat batch besar)
+- **Storage:** 500MB buat software + ruang buat output
+- **Graphics:** Nggak perlu GPU dedicated
 
-**Tidak Diperlukan:**
-- RTX graphics card atau dedicated GPU
+**Nggak Perlu:**
+- Graphics card RTX atau GPU mahal
 - RAM 32GB
 - NVMe SSD super cepat
-- Internet connection (kecuali untuk Mode B download)
+- Koneksi internet (kecuali Mode B download)
 
-**Test Performance:**
-Kami test Autotube pada laptop HP 14s (Core i3-1115G4, 8GB RAM, HDD) dan berhasil:
-- Loop 10 menit video: 43 detik
-- Download 10 MP3 concurrent: 8 menit
-- Concat 20 audio files: 6 menit 12 detik
-
-**Software ini berjalan di komputer yang Anda sudah miliki.**
+**Software ini jalan di komputer yang kamu punya sekarang.**
 
 ---
 
-### KEAMANAN & PRIVACY: DATA ANDA TETAP MILIK ANDA
+### KEAMANAN & PRIVACY: DATA KAMU TETAP MILIK KAMU
 
-Di era dimana hampir semua software "cloud-based" dan mengirim data Anda ke server mereka, Autotube mengambil pendekatan berbeda.
+Di era hampir semua software "cloud-based" dan kirim data kamu ke server mereka, Autotube ambil pendekatan beda.
 
-**Prinsip Privacy Kami:**
+**Prinsip Privacy:**
 
-1. **100% Processing Lokal**
-Semua video processing terjadi di komputer Anda. File tidak pernah diupload ke server kami (karena kami tidak punya server).
+1. **100% Proses Lokal**
+Semua proses video terjadi di komputer kamu. File nggak pernah diupload ke server (karena emang nggak ada servernya).
 
 2. **Zero Telemetry**
-Kami tidak collect usage data, statistics, atau crash reports. Software tidak "phone home".
+Nggak collect data usage, statistik, atau crash reports. Software nggak "nelpon pulang".
 
-3. **Tidak Ada Tracking**
-Tidak ada analytics, tidak ada cookies, tidak ada user profiling.
+3. **Nggak Ada Tracking**
+Nggak ada analytics, nggak ada cookies, nggak ada profiling user.
 
-4. **Tidak Ada Account System**
-Tidak perlu register. Tidak ada login. Tidak ada email validation. Download dan langsung pakai.
+4. **Nggak Ada Sistem Account**
+Nggak perlu register. Nggak ada login. Download dan langsung pakai.
 
 5. **Open Source Transparency**
-Source code di GitHub bisa di-audit oleh siapapun. Tidak ada hidden functionality.
+Source code di GitHub bisa diaudit siapa aja. Nggak ada functionality tersembunyi.
 
-**Anda control data Anda 100%.**
-
----
-
-### LEGALITAS: APAKAH INI LEGAL?
-
-**Pertanyaan yang sering ditanyakan, dan jawaban yang transparan:**
-
-**Q: Apakah legal menggunakan FFmpeg?**
-A: Ya, 100%. FFmpeg adalah open-source software dengan LGPL license yang membolehkan penggunaan komersial dan personal.
-
-**Q: Apakah legal mendownload dari YouTube?**
-A: Ini adalah gray area. YouTube Terms of Service melarang download tanpa izin. **Anda bertanggung jawab** untuk hanya mendownload konten yang:
-- Anda miliki copyright-nya
-- Anda sudah mendapat izin dari pemilik
-- Berada di public domain atau Creative Commons
-
-Autotube adalah tool. Seperti browser, camera, atau voice recorder—legal tidaknya tergantung bagaimana Anda menggunakannya.
-
-**Q: Apakah video output bisa dimonetize?**
-A: Tergantung pada source content. Kalau Anda menggunakan audio/video yang Anda miliki haknya atau royalty-free, maka output video juga dapat dimonetize sesuai platform rules.
-
-**Kami menyediakan tool. Anda yang bertanggung jawab untuk menggunakannya secara etis dan legal.**
+**Kamu kontrol data kamu 100%.**
 
 ---
 
-### DOKUMENTASI: SUPPORT DALAM BAHASA INDONESIA
+### LEGALITAS: APA INI LEGAL?
 
-Salah satu frustrasi terbesar dengan open-source software adalah dokumentasi yang buruk atau hanya tersedia dalam Bahasa Inggris.
+**Pertanyaan yang sering ditanya, jawaban yang transparan:**
+
+**Q: Apa legal pakai FFmpeg?**
+A: Ya, 100%. FFmpeg adalah open-source dengan LGPL license yang boleh dipakai komersial dan personal.
+
+**Q: Apa legal download dari YouTube?**
+A: Ini area abu-abu. YouTube Terms of Service melarang download tanpa izin. **Kamu bertanggung jawab** buat cuma download konten yang:
+- Kamu punya copyright-nya
+- Udah dapat izin dari pemilik
+- Public domain atau Creative Commons
+
+Autotube adalah tool. Kayak browser, kamera, atau voice recorder—legal atau nggaknya tergantung gimana kamu pakai.
+
+**Kami sediakan tool. Kamu yang bertanggung jawab pakai secara etis dan legal.**
+
+---
+
+### DOKUMENTASI: SUPPORT BAHASA INDONESIA
+
+Salah satu frustasi terbesar sama open-source software adalah dokumentasi yang jelek atau cuma ada Bahasa Inggris.
 
 **Autotube menyediakan:**
 
 1. **APLIKASI_INFO.md** (400+ baris)
-Dokumentasi comprehensive menjelaskan semua fitur, use cases, dan technical details dalam Bahasa Indonesia.
+Dokumentasi lengkap jelasin semua fitur, use cases, dan detail teknis dalam Bahasa Indonesia.
 
 2. **QUICK_ANSWER.md** (150 baris)
-Quick reference untuk jawab pertanyaan "Aplikasi ini buat apa?" dalam 30 detik.
+Quick reference buat jawab pertanyaan "Aplikasi ini buat apa?" dalam 30 detik.
 
 3. **README dengan Screenshots**
-Visual guide untuk instalasi dan basic usage.
+Visual guide buat instalasi dan penggunaan dasar.
 
 4. **GitHub Issues untuk Bug Reports**
-Community support dengan response time rata-rata 24 jam.
+Community support.
 
-**Tidak ada language barrier. Tidak ada dokumentasi yang confusing.**
+**Nggak ada language barrier. Nggak ada dokumentasi yang bikin bingung.**
 
 ---
 
-### INSTALASI: 5 MENIT DARI DOWNLOAD KE PRODUCTIVE
+### INSTALASI: 5 MENIT DARI DOWNLOAD SAMPAI PRODUKTIF
 
-Kami respect waktu Anda. Instalasi dirancang sesimple mungkin.
+Instalasi dibuat sesimpel mungkin.
 
 **Step 1: Download (2 menit)**
-- Kunjungi GitHub repository
-- Download installer untuk OS Anda (Windows .exe atau Linux .deb/.rpm)
+- Buka GitHub repository
+- Download installer buat OS kamu (Windows .exe atau Linux .deb/.rpm)
 - File size: ~50MB
 
 **Step 2: Install (2 menit)**
 - Windows: Double-click installer → Next → Next → Install
 - Linux: `sudo dpkg -i autotube.deb` atau `sudo rpm -i autotube.rpm`
-- Software auto-detect FFmpeg (atau install jika belum ada)
+- Software auto-detect FFmpeg (atau install kalau belum ada)
 
-**Step 3: Run (1 menit)**
-- Launch Autotube dari Start Menu atau Applications
-- Interface langsung terbuka, pilih mode A/B/C
+**Step 3: Jalankan (1 menit)**
+- Buka Autotube dari Start Menu atau Applications
+- Interface langsung kebuka, pilih mode A/B/C
 - Drag file atau paste URL
-- Klik tombol → Done
+- Klik tombol → Selesai
 
-**Total time: Kurang dari 5 menit dari download sampai create video pertama.**
+**Total: Kurang dari 5 menit dari download sampai bikin video pertama.**
 
 ---
 
-### SIAPA YANG SEBAIKNYA MENGGUNAKAN AUTOTUBE?
+### SIAPA YANG SEBAIKNYA PAKAI AUTOTUBE?
 
-Berdasarkan user research kami, Autotube paling bermanfaat untuk:
+Autotube paling berguna buat:
 
 **1. YouTube Content Creators**
-Terutama yang fokus pada music compilations, lofi channels, study music, atau background videos yang memerlukan loop seamless.
+Terutama yang fokus music compilations, lofi channels, study music, atau background videos yang butuh loop seamless.
 
 **2. Podcast Producers**
-Yang perlu batch download episodes, normalize audio untuk consistency, atau compile highlights menjadi video.
+Yang perlu batch download episodes, normalize audio buat consistency, atau compile highlights jadi video.
 
 **3. Social Media Managers**
-Yang manage multiple accounts dan butuh produce konten cepat dengan consistent quality.
+Yang manage multiple accounts dan butuh produce konten cepat dengan kualitas konsisten.
 
 **4. Indie Game Developers**
-Yang perlu create seamless background music loops untuk game assets.
+Yang perlu bikin seamless background music loops buat game assets.
 
 **5. Educators & Course Creators**
-Yang compile video materials atau create long-form content dari multiple sources.
+Yang compile video materials atau bikin long-form content dari berbagai sumber.
 
 **6. Streamers**
-Yang butuh seamless background loops untuk stream screens atau waiting rooms.
+Yang butuh seamless background loops buat stream screens atau waiting rooms.
 
-**Jika Anda termasuk dalam kategori di atas, Autotube akan menghemat 10-20 jam per minggu dari workflow Anda.**
-
----
-
-### ROI CALCULATION: BERAPA NILAI WAKTU YANG DIHEMAT?
-
-Mari kita hitung dengan angka konservatif.
-
-**Assumption:**
-- Anda content creator part-time
-- 3 hari per minggu untuk content production
-- Menghabiskan 2 jam per hari untuk repetitive tasks (download, edit loop, normalize)
-- = 6 jam per minggu
-
-**Dengan Autotube:**
-- Tasks yang sama selesai dalam 45 menit (87% time reduction)
-- Hemat: 5.25 jam per minggu
-- Hemat: 21 jam per bulan
-- Hemat: 252 jam per tahun
-
-**Kalau waktu Anda dihargai Rp 50.000/jam:**
-252 jam × Rp 50.000 = **Rp 12.6 juta per tahun**
-
-**Kalau Anda full-time creator dengan hourly rate Rp 100.000:**
-252 jam × Rp 100.000 = **Rp 25.2 juta per tahun**
-
-**Dan Autotube gratis.**
-
-Bahkan kalau Anda hanya hemat 2 jam per minggu, itu sudah equivalent dengan nilai Rp 5+ juta per tahun.
-
-**Investment: Rp 0 + 5 menit install time**
-**Return: Rp 5-25 juta per tahun dalam time saved**
-
-**ROI tak terhingga.**
+**Kalau kamu termasuk kategori di atas, Autotube bakal menghemat banyak waktu dari workflow kamu.**
 
 ---
 
 ### KESIMPULAN: KEPUTUSAN BERDASARKAN FAKTA
 
-Kami tidak meminta Anda untuk percaya pada hype atau marketing gimmick.
+Nggak perlu percaya hype atau marketing gimmick.
 
-**Inilah faktanya:**
+**Ini faktanya:**
 
-✓ **Proven Technology:** FFmpeg & yt-dlp digunakan oleh industri bernilai miliaran dollar
-✓ **Tested Performance:** 87% time reduction dalam independent test
-✓ **Zero Cost:** Gratis, open-source, tidak ada hidden fees
-✓ **Privacy Respected:** 100% local processing, zero telemetry
-✓ **Lightweight:** Jalan di komputer rata-rata, tidak butuh hardware mahal
-✓ **Documented:** Dokumentasi lengkap dalam Bahasa Indonesia
-✓ **Transparent:** Source code available untuk audit
-✓ **Legal:** Menggunakan open-source licenses yang proper
+✓ **Teknologi Proven:** FFmpeg & yt-dlp dipakai industri bernilai miliaran dollar
+✓ **Zero Cost:** Gratis, open-source, nggak ada hidden fees
+✓ **Privacy Respected:** 100% proses lokal, zero telemetry
+✓ **Lightweight:** Jalan di komputer biasa, nggak butuh hardware mahal
+✓ **Documented:** Dokumentasi lengkap Bahasa Indonesia
+✓ **Transparent:** Source code available buat audit
+✓ **Legal:** Pakai open-source licenses yang proper
 
-**Pertanyaannya bukan "Apakah Autotube work?"**
-Data sudah membuktikan iya.
+**Pertanyaannya bukan "Apa Autotube work?"**
 
-**Pertanyaannya adalah: "Apakah Anda akan continue membuang 15+ jam per minggu untuk repetitive tasks, atau mengambil 5 menit untuk install tool yang sudah terbukti?"**
+**Pertanyaannya: "Apa kamu mau terus habiskan waktu berjam-jam buat repetitive tasks, atau coba tool yang bisa bantu otomasi?"**
 
-Keputusan ada di tangan Anda. Kami hanya menyediakan facts.
+Keputusan di tangan kamu.
 
 ---
 
@@ -403,17 +339,17 @@ Keputusan ada di tangan Anda. Kami hanya menyediakan facts.
 
 **Download Autotube sekarang dari GitHub repository.**
 
-Dalam 5 menit dari sekarang, Anda bisa:
-- Create seamless loop pertama Anda
+Dalam 5 menit dari sekarang, kamu bisa:
+- Bikin seamless loop pertama
 - Download batch 10 video dengan volume konsisten
-- Generate video compilation dari audio library Anda
+- Generate video compilation dari audio library
 
-**Atau Anda bisa kembali ke workflow lama:**
-- 45 menit untuk edit satu loop manual
-- 3 jam untuk download 50 video satu-persatu
-- Overnight rendering untuk video compilation
+**Atau kamu bisa balik ke workflow lama:**
+- 45 menit buat edit satu loop manual
+- 3 jam buat download 50 video satu-satu
+- Render overnight buat video compilation
 
-**Pilihan berbasis fakta, bukan emosi.**
+**Pilihan ada di tangan kamu.**
 
 ---
 
@@ -426,16 +362,16 @@ Dalam 5 menit dari sekarang, Anda bisa:
 
 ---
 
-### FOOTNOTE
+### PENUTUP
 
-Software ini dikembangkan sebagai passion project, bukan commercial venture. Tidak ada investor yang perlu di-please. Tidak ada profit target yang harus dicapai. Hanya developer yang ingin membuat tools yang benar-benar useful.
+Software ini dibuat sebagai passion project, bukan commercial venture. Nggak ada investor yang perlu dipuasin. Nggak ada profit target yang harus dicapai. Cuma developer yang pengen bikin tools yang beneran berguna.
 
-Kalau Autotube membantu Anda, kami hanya minta satu hal: **Share ke sesama creator**. Semakin banyak orang yang produktif, semakin banyak quality content di internet.
+Kalau Autotube bantu kamu, cuma minta satu hal: **Share ke sesama creator**. Makin banyak orang yang produktif, makin banyak quality content di internet.
 
-Dan itu benefit untuk semua.
+Dan itu benefit buat semua.
 
 ---
 
 *"The best ideas come as jokes. Make your thinking as funny as possible." - David Ogilvy*
 
-*Tapi data tidak bohong. Test Autotube. Prove it yourself.*
+*Tapi hasil kerja nggak bohong. Coba Autotube. Buktiin sendiri.*

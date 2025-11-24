@@ -1,334 +1,208 @@
 # AUTOTUBE COPYWRITING
-## CLAUDE HOPKINS STYLE
-### "Scientific Advertising" - Reason-Why Copy, Test-Based, Service-Focused
+## GAYA CLAUDE HOPKINS
+### "Scientific Advertising" - Reason-Why, Jelaskan Mekanisme, Fokus Layanan
 
 ---
 
 ## HEADLINE:
 
-**"Mengapa 847 Content Creator Indonesia Meninggalkan Software Editing Mahal dan Beralih ke Software Gratis Ini—Dan Mengapa Mereka Menghemat Rata-Rata 14.3 Jam Per Minggu"**
+**"Kenapa Content Creator Banyak yang Beralih dari Software Mahal ke Software Gratis Ini—Dan Kenapa Mereka Bisa Hemat Waktu Berjam-jam Tiap Minggu"**
 
 ---
 
-## PERTAMA, MARI KITA BICARA TENTANG MASALAH ANDA
+## PERTAMA, MARI BICARA SOAL MASALAH KAMU
 
-Anda tidak butuh software yang fancy. Anda tidak butuh 1000 fitur yang tidak pernah Anda pakai.
+Kamu nggak butuh software yang ribet dengan 1000 fitur yang nggak pernah kepake.
 
-**Yang Anda butuh adalah solusi untuk 3 masalah spesifik:**
+**Yang kamu butuh adalah solusi buat 3 masalah spesifik:**
 
-**Masalah #1:** Video loop Anda terlihat terpotong-potong. Jump yang terlihat di titik perulangan membuat viewers terganggu dan channel Anda terlihat tidak profesional.
+**Masalah #1:** Video loop kamu keliatan terpotong. Jump yang keliatan pas video ulang bikin viewers terganggu dan channel kamu keliatan nggak profesional.
 
-**Masalah #2:** Download 50 video memakan waktu seharian. Audio volume tidak konsisten—ada yang terlalu pelan, ada yang terlalu keras. Viewers complain di comment section.
+**Masalah #2:** Download 50 video makan waktu seharian. Volume audio nggak konsisten—ada yang kecil banget, ada yang keras banget. Viewers komplain di comment.
 
-**Masalah #3:** Membuat video compilation 2 jam dari 30 file audio memerlukan import manual satu-persatu, arrange di timeline, render berjam-jam. Anda kehilangan satu hari penuh hanya untuk satu video.
+**Masalah #3:** Bikin video compilation 2 jam dari 30 file audio butuh import manual satu-satu, atur di timeline, render berjam-jam. Kehilangan satu hari penuh cuma buat satu video.
 
-**Kami tahu masalah ini karena kami mengalaminya sendiri.**
-
----
-
-## BAGAIMANA KAMI MENEMUKAN SOLUSINYA
-
-Tahun 2023, kami melakukan survey kepada 300 content creator di Indonesia. Kami bertanya satu pertanyaan simple:
-
-**"Apa yang paling membuang waktu Anda dalam video production?"**
-
-87% menjawab: **"Repetitive technical tasks yang bisa diotomasi tapi tidak ada toolnya"**
-
-Specific tasks yang disebutkan:
-- Download video satu-per-satu (78% responden)
-- Edit video loop manual (65% responden)
-- Normalize audio volume (71% responden)
-- Compile multiple audio jadi satu video (58% responden)
-
-**Kami tidak langsung membuat software. Kami test dulu hipotesa kami.**
+**Masalah ini umum banget. Dan frustrating.**
 
 ---
 
-## TEST #1: APAKAH AUTOMATION BENAR-BENAR MENGHEMAT WAKTU?
+## KENAPA AUTOTUBE BEKERJA? (REASON-WHY)
 
-Kami ambil 20 content creator. Bagi menjadi 2 grup:
+Software lain kasih kamu tools. Autotube kasih kamu **sistem**.
 
-**Grup A (Control):** Gunakan workflow manual seperti biasa
-**Grup B (Test):** Gunakan prototype Autotube
+**Alasan #1: Pakai Teknologi yang Sama dengan Industry Leaders**
 
-**Task:** Buat 10 video loop, download 20 URL dengan normalized audio, dan create 1 video compilation dari 15 audio files.
+Autotube dibangun di atas FFmpeg—framework multimedia yang sama dipakai:
+- YouTube (proses ratusan jam video per menit)
+- Netflix (encode & stream ke jutaan subscribers)
+- Facebook (handle miliaran video views)
 
-**Result:**
+**Ini bukan teknologi buatan sendiri. Ini teknologi yang udah dipakai miliaran orang tiap hari.**
 
-| Metrik | Grup A (Manual) | Grup B (Autotube) | Selisih |
-|--------|----------------|-------------------|---------|
-| **Total waktu** | 6 jam 42 menit | 52 menit | **-87%** |
-| **Video loop (avg per video)** | 38 menit | 34 detik | **-98.5%** |
-| **Download + normalize 20 files** | 2 jam 18 menit | 16 menit | **-88%** |
-| **Video compilation** | 2 jam 54 menit | 9 menit | **-95%** |
-| **Error rate** | 15% (volume inconsistent) | 0% | **100% improvement** |
+Pas kamu nonton YouTube, dengerin Spotify, atau scroll Facebook video—di belakang layar, FFmpeg yang kerja.
 
-**Hipotesa terbukti: Automation menghemat 87% waktu dengan 0% error rate.**
+**Kita cuma bikin interface yang gampang dipakai buat teknologi industrial-grade ini.**
 
 ---
 
-## TEST #2: APAKAH HASIL AUTOMATION SAMA KUALITASNYA?
+**Alasan #2: Fokus ke 3 Masalah Spesifik, Bukan 100 Fitur Generic**
 
-Kami buat blind test. 100 responden diminta menilai quality dari video yang dibuat:
-- **Set A:** 10 video loop dibuat manual di Adobe Premiere
-- **Set B:** 10 video loop dibuat dengan Autotube
+Software lain coba jadi "Swiss Army knife"—punya segala fitur tapi nggak ada yang excellent.
 
-**Result:**
+**Kita fokus ke apa yang beneran dibutuhin creator.**
 
-| Aspek | Set A (Manual) | Set B (Autotube) | Winner |
-|-------|----------------|------------------|--------|
-| **Seamless transition** | 7.2/10 | 8.9/10 | **Autotube** |
-| **Audio quality** | 8.1/10 | 8.1/10 | **Tie** |
-| **Video quality** | 8.3/10 | 8.3/10 | **Tie** |
-| **Overall professionalism** | 7.8/10 | 8.6/10 | **Autotube** |
+Dari pengalaman sendiri dan diskusi dengan creator lain, ada 3 repetitive tasks yang paling buang waktu:
+1. Loop creation (sering banget dikerjain)
+2. Batch download (rutin tiap minggu)
+3. Audio compilation (buat video panjang)
 
-**94% responden tidak bisa membedakan mana yang dibuat dengan software $50/bulan vs gratis.**
+**Kita build 3 mode buat solve 3 masalah ini secara sempurna.**
 
-**Conclusion: Quality sama atau lebih baik, tapi 98% lebih cepat.**
+Nggak ada fitur "nice to have" yang bikin bingung. Nggak ada bloat. Cuma solusi buat masalah yang real.
 
 ---
 
-## MENGAPA AUTOTUBE BEKERJA? (REASON-WHY)
+**Alasan #3: Test Setiap Aspek Sampai Bener**
 
-Software lain memberikan Anda tools. Autotube memberikan Anda **system**.
+Contoh: **Algoritma crossfade buat seamless loop.**
 
-**Reason #1: Kami Menggunakan Teknologi yang Sama Dengan Industry Leaders**
+**Coba pertama:** Overlap 1 detik end + start → Hasil: Durasi jadi lebih panjang dari aslinya (GAGAL)
 
-Autotube built on FFmpeg—framework multimedia yang sama digunakan oleh:
-- YouTube (process 500+ jam video diupload per menit)
-- Netflix (encode & stream ke 230 juta subscribers)
-- Facebook (handle 8 miliar video views per hari)
+**Coba kedua:** Cut 0.5 detik dari end, blend dengan start → Hasil: Video jadi lebih pendek (GAGAL)
 
-**Ini bukan teknologi buatan kami. Ini teknologi yang sudah dipakai miliaran orang setiap hari.**
+**Coba ketiga:** Trim video di (duration - crossfade), blend trimmed end dengan start, concat dengan main → Hasil: **PERFECT**. Durasi sama, loop mulus.
 
-Ketika Anda watch YouTube, listen to Spotify, atau scroll Facebook video—di belakang layar, FFmpeg yang bekerja.
-
-**Kami hanya membuat interface yang mudah dipakai untuk teknologi industrial-grade ini.**
+**Nggak asal tebak. Coba sampai bener.**
 
 ---
 
-**Reason #2: Kami Fokus pada 3 Masalah Spesifik, Bukan 100 Fitur Generic**
+**Alasan #4: Solve Edge Cases yang Software Lain Ignore**
 
-Software lain mencoba jadi "Swiss Army knife"—punya segala fitur tapi tidak ada yang excellent.
+**Masalah:** File MP3 dari MusicGPT/Suno punya embedded album art. FFmpeg detect sebagai video stream. Concat gagal karena MP3 nggak bisa contain video.
 
-**Kami test apa yang benar-benar dibutuhkan creator.**
+**Solusi:** Auto-detect video stream, map cuma audio stream (`-map 0:a`), ignore album art.
 
-Dari 300 responden survey, kami identifikasi 3 repetitive tasks yang paling memakan waktu:
-1. Loop creation (65% melakukan weekly)
-2. Batch download (78% melakukan weekly)
-3. Audio compilation (58% melakukan monthly)
+**Masalah:** Windows file locking error (WinError 32) pas multiple threads normalize file yang sama.
 
-**Kami build 3 mode untuk solve 3 masalah ini secara perfect.**
+**Solusi:** Implement thread-safe file locking dengan retry logic exponential backoff.
 
-Tidak ada fitur "nice to have" yang membingungkan. Tidak ada bloat. Hanya solution untuk problem yang real.
+**Test di real-world scenario, bukan cuma ideal conditions.**
 
 ---
 
-**Reason #3: Kami Test Setiap Aspek Sampai Perfect**
-
-Contoh: **Crossfade algorithm untuk seamless loop.**
-
-**Test iterasi 1:** Overlap 1 detik end + start → Result: Duration jadi lebih panjang dari original (FAILED)
-
-**Test iterasi 2:** Cut 0.5 detik dari end, blend dengan start → Result: Video jadi lebih pendek (FAILED)
-
-**Test iterasi 3:** Trim video di (duration - crossfade), blend trimmed end dengan start, concat dengan main → Result: **PERFECT**. Duration sama, loop seamless.
-
-**Kami tidak guess. Kami test sampai work.**
-
----
-
-**Reason #4: Kami Solve Edge Cases yang Software Lain Ignore**
-
-**Problem:** MP3 file dari MusicGPT/Suno punya embedded album art. FFmpeg detect sebagai video stream. Concat gagal karena MP3 tidak bisa contain video.
-
-**Solution:** Auto-detect video stream, map hanya audio stream (`-map 0:a`), ignore album art.
-
-**Problem:** Windows file locking error (WinError 32) ketika multiple threads normalize file yang sama.
-
-**Solution:** Implement thread-safe file locking dengan retry logic exponential backoff.
-
-**Kami test di real-world scenario, bukan cuma ideal conditions.**
-
----
-
-## BAGAIMANA AUTOTUBE MENGHEMAT WAKTU ANDA? (MECHANISM)
+## GIMANA AUTOTUBE HEMAT WAKTU KAMU? (MEKANISME)
 
 ### MODE A: LOOP CREATOR
 
-**Old Way (Manual):**
+**Cara Lama (Manual):**
 1. Import video ke Premiere/Vegas (2 menit)
 2. Duplicate di timeline (1 menit)
-3. Find beat point untuk cut (5-10 menit)
+3. Cari beat point buat cut (5-10 menit)
 4. Apply crossfade transition manual (3 menit)
-5. Adjust timing supaya seamless (10-20 menit)
+5. Adjust timing biar seamless (10-20 menit)
 6. Render (5-10 menit)
 **Total: 26-46 menit per video**
 
-**New Way (Autotube):**
+**Cara Baru (Autotube):**
 1. Drag video ke Autotube (5 detik)
-2. Set crossfade duration (5 detik)
-3. Click "Create Loop" (5 detik)
+2. Set durasi crossfade (5 detik)
+3. Klik "Create Loop" (5 detik)
 4. Processing (15-30 detik)
 **Total: 30-45 detik per video**
 
-**Time saved: 25-45 menit per video = 98% reduction**
+**Waktu hemat: 25-45 menit per video**
 
-**Kalau Anda buat 10 loop per minggu:**
-Old way: 4.3 - 7.7 jam
-New way: 5 - 7.5 menit
-**Save: 4+ jam per minggu**
+**Kalau kamu bikin 10 loop per minggu:**
+Cara lama: 4-7 jam
+Cara baru: 5-7 menit
+**Hemat: 4+ jam per minggu**
 
 ---
 
 ### MODE B: MASS DOWNLOADER
 
-**Old Way (Manual):**
+**Cara Lama (Manual):**
 1. Copy URL (5 detik)
 2. Paste ke downloader (5 detik)
-3. Click download (5 detik)
-4. Wait sampai selesai (3-5 menit)
-5. Repeat 49x lagi
-6. Open Audacity/FFmpeg untuk normalize SETIAP file (2 menit per file)
-**Total untuk 50 files: 3.5 - 4 jam**
+3. Klik download (5 detik)
+4. Tunggu selesai (3-5 menit)
+5. Ulangi 49x lagi
+6. Buka Audacity/FFmpeg buat normalize TIAP file (2 menit per file)
+**Total buat 50 files: 3.5 - 4 jam**
 
-**New Way (Autotube):**
+**Cara Baru (Autotube):**
 1. Copy semua 50 URLs (30 detik)
 2. Paste ke Autotube (10 detik)
 3. Select "MP3 320kbps + Normalize" (5 detik)
-4. Click "Start Download" (5 detik)
-5. Wait sambil kerja lain (20-30 menit, otomatis)
+4. Klik "Start Download" (5 detik)
+5. Tunggu sambil kerja lain (20-30 menit, otomatis)
 **Total: 21-31 menit**
 
-**Time saved: 3+ jam untuk 50 files = 88% reduction**
+**Waktu hemat: 3+ jam buat 50 files**
 
 **Plus benefit tambahan:**
-- ✓ Semua file volume konsisten (-16 LUFS standar streaming)
+- ✓ Semua file volume konsisten
 - ✓ Auto-generate M3U playlist
-- ✓ Deduplicate URLs otomatis (no duplicate downloads)
-- ✓ Skip already downloaded files (save bandwidth)
+- ✓ Deduplicate URLs otomatis
+- ✓ Skip file yang udah didownload
 
 ---
 
 ### MODE C: VIDEO GENERATOR
 
-**Old Way (Manual):**
+**Cara Lama (Manual):**
 1. Buka Premiere/Vegas (1 menit)
 2. Create new project (1 menit)
-3. Import 30 audio files satu-per-satu (5 menit)
+3. Import 30 audio files satu-satu (5 menit)
 4. Drag semua ke timeline (10 menit)
 5. Import visual background (2 menit)
 6. Adjust visual duration match audio (15 menit)
 7. Export settings (2 menit)
-8. Render (30-90 menit depending on duration)
+8. Render (30-90 menit tergantung durasi)
 **Total: 66-126 menit (1-2 jam)**
 
-**New Way (Autotube):**
+**Cara Baru (Autotube):**
 1. Select folder audio files (10 detik)
 2. Select visual background (10 detik)
-3. Click "Generate Video" (5 detik)
-4. Processing (5-10 menit untuk 30 files)
+3. Klik "Generate Video" (5 detik)
+4. Processing (5-10 menit buat 30 files)
 **Total: 6-11 menit**
 
-**Time saved: 55-115 menit = 90-95% reduction**
-
-**Untuk video compilation 2 jam:**
-Old way: 1-2 jam
-New way: 6-11 menit
-**Save: 1.5 jam per video**
+**Waktu hemat: 55-115 menit**
 
 ---
 
-## PROOF: APA KATA USERS YANG SUDAH MENCOBA?
+## KENAPA GRATIS? (TRANSPARANSI PENUH)
 
-**Kami tidak minta Anda percaya kata-kata kami. Kami minta Anda lihat hasil test dari users real.**
+Kamu mungkin tanya: "Kalau bagus, kenapa gratis? Ada catch-nya?"
 
-### Test Case #1: YouTube Channel "Lofi Chill Indonesia" (45K subs)
+**Alasan kenapa dibuat gratis:**
 
-**Before Autotube:**
-- Upload 2 video per minggu
-- 6 jam per video (download, edit loop, render)
-- = 12 jam per minggu
+**Alasan #1: Dibuat Sama Software Engineer, Bukan Businessman**
 
-**After Autotube:**
-- Upload 6 video per minggu (3x lipat)
-- 45 menit per video (download + loop dengan Autotube)
-- = 4.5 jam per minggu
+Developer Autotube adalah software engineer yang juga content creator. Dibuat buat solve masalah sendiri. Ternyata creator lain juga punya masalah yang sama.
 
-**Result:**
-- Upload frequency naik 3x
-- Time spent turun 62%
-- Watch time channel naik 287% dalam 3 bulan
+Bisa:
+- **Option A:** Jual dengan subscription → Profit
+- **Option B:** Release gratis → Help banyak creators, contribute ke community
+
+**Pilih Option B.**
+
+Uang bukan satu-satunya ukuran value. Impact ke community juga valuable.
 
 ---
 
-### Test Case #2: Podcast Producer "Cerita Malam" (18K subs)
+**Alasan #2: Teknologi Dasarnya Udah Gratis (FFmpeg, yt-dlp)**
 
-**Before Autotube:**
-- 1 episode compilation per bulan (15-20 highlight clips)
-- 4 jam untuk compile (import, arrange, normalize, render)
+Nggak invent FFmpeg. Nggak invent yt-dlp. Teknologi inti udah open-source.
 
-**After Autotube:**
-- 1 episode compilation per minggu
-- 12 menit untuk compile (automatic concat + normalize)
+**Cuma bikin wrapper yang user-friendly.**
 
-**Result:**
-- Content output naik 4x
-- Production time turun 95%
-- Subscriber growth rate naik 156%
+Rasanya nggak etis buat charge uang buat software yang 80% built on teknologi gratis.
 
 ---
 
-### Test Case #3: Social Media Manager Agency (15 clients)
-
-**Before Autotube:**
-- 1 dedicated video editor per 5 clients
-- 3 editors total (salary Rp 5 juta/bulan each = Rp 15 juta/bulan)
-
-**After Autotube:**
-- 1 editor handle semua 15 clients dengan Autotube
-- 2 editors di-reallocate ke creative tasks
-
-**Result:**
-- Save Rp 10 juta/bulan di editor salary
-- Video output quality sama/lebih baik
-- Creative output naik karena ada resource untuk creative brainstorm
-
-**ROI: Rp 120 juta/tahun dari software yang gratis**
-
----
-
-## MENGAPA GRATIS? (TRANSPARANSI PENUH)
-
-Anda mungkin bertanya: "Kalau bagus, kenapa gratis? Ada catch-nya?"
-
-**Reason-why kami buat ini gratis:**
-
-**Reason #1: Kami Software Engineer, Bukan Businessman**
-
-Kami develop Autotube untuk solve masalah kami sendiri. Ternyata 300+ content creator lain punya masalah yang sama.
-
-Kami bisa:
-- **Option A:** Jual dengan subscription $29/bulan → Profit $870/bulan dari 30 users
-- **Option B:** Release gratis → Help 1000+ creators, build reputation, contribute ke community
-
-**Kami pilih Option B.**
-
-Money bukan satu-satunya measure of value. Impact ke community juga valuable.
-
----
-
-**Reason #2: Teknologi Dasarnya Sudah Gratis (FFmpeg, yt-dlp)**
-
-Kami tidak invent FFmpeg. Kami tidak invent yt-dlp. Teknologi inti sudah open-source.
-
-**Kami hanya membuat wrapper yang user-friendly.**
-
-Rasanya tidak etis untuk charge money untuk software yang 80% built on free technology.
-
----
-
-**Reason #3: No Server Cost = No Need untuk Subscription**
+**Alasan #3: Nggak Ada Server Cost = Nggak Perlu Subscription**
 
 Software lain charge subscription karena mereka punya server cost:
 - Cloud processing
@@ -336,184 +210,129 @@ Software lain charge subscription karena mereka punya server cost:
 - Bandwidth
 - Maintenance
 
-**Autotube process semua di komputer Anda.** Kami tidak punya server. Tidak ada monthly cost yang perlu di-cover.
+**Autotube proses semua di komputer kamu.** Nggak punya server. Nggak ada monthly cost yang perlu di-cover.
 
 Jadi kenapa charge subscription?
 
 ---
 
-**Reason #4: Open Source = Community Improvements**
+## KEBUTUHAN SISTEM: DIBUAT BUAT EFISIENSI
 
-Dengan release open-source, developers lain bisa contribute improvements, report bugs, suggest features.
+**Kebutuhan Minimum:**
+- **OS:** Windows 10/11 atau Linux (Ubuntu 18.04+, Debian, Fedora)
+- **CPU:** Intel Core i3 gen 7 atau AMD Ryzen 3
+- **RAM:** 4GB (8GB recommended buat batch besar)
+- **Storage:** 500MB buat software + ruang buat output
+- **Graphics:** Nggak perlu GPU dedicated
 
-**Software jadi lebih baik karena community input.**
-
-Closed-source software hanya improve sesuai agenda corporate. Open-source improve sesuai kebutuhan user real.
-
----
-
-## SISTEM REQUIREMENT: DIRANCANG UNTUK EFFICIENCY
-
-**Kami test Autotube di berbagai hardware configurations untuk ensure compatibility.**
-
-**Test Configuration 1 (Low-end):**
-- Laptop HP 14s (Core i3-1115G4, 8GB RAM, HDD 5400rpm)
-- **Result:** Semua mode berjalan smooth. Loop 10 min video: 43 detik
-
-**Test Configuration 2 (Mid-range):**
-- Desktop Core i5-9400F, 16GB RAM, SSD SATA
-- **Result:** Excellent performance. Loop 10 min video: 28 detik
-
-**Test Configuration 3 (High-end):**
-- Desktop Ryzen 7 5800X, 32GB RAM, NVMe SSD
-- **Result:** Maximum speed. Loop 10 min video: 19 detik
-
-**Conclusion: Software bekerja di semua levels. Tidak butuh expensive hardware.**
+**Software jalan di komputer yang kamu punya.**
 
 ---
 
 ## PERBANDINGAN DENGAN ALTERNATIF
 
-Kami test 7 software sejenis (gratis & berbayar) untuk compare performance.
-
 | Software | Biaya/tahun | Loop Time | Batch DL | Normalize | Watermark | Offline |
 |----------|-------------|-----------|----------|-----------|-----------|---------|
-| **Adobe Premiere** | $0 (licensed) | 45 min | ✗ | Manual | ✗ | ✓ |
-| **VideoProc** | Rp 900K | 8 min | ✓ (limit 50) | ✓ | ✗ | ✓ |
-| **ClipGrab** | Gratis | N/A | ✓ (1 by 1) | ✗ | ✗ | ✓ |
-| **4K Video DL** | Rp 1.2 juta | N/A | ✓ (limit 25) | ✗ | ✓ (free ver) | ✓ |
-| **Kapwing** | Rp 2.4 juta | 12 min | ✓ (limit 10) | ✓ | ✓ (free ver) | ✗ |
-| **Cloudconvert** | Rp 1.8 juta | 15 min | ✗ | ✓ | ✗ | ✗ |
+| **Adobe Premiere** | Rp 0 (tapi waktu kamu) | 45 min | ✗ | Manual | ✗ | ✓ |
+| **Software Berbayar** | Rp 3-10 juta | 5-10 min | ✓ (limit) | ✓ | Kadang | ✓ |
 | **AUTOTUBE** | **Rp 0** | **30 detik** | **✓ (unlimited)** | **✓** | **✗** | **✓** |
 
-**Test methodology:**
-- Same input files untuk fair comparison
-- Measured actual time dari start sampai output ready
-- Tested dengan 10 samples per software untuk average result
+---
 
-**Result: Autotube fastest + cheapest + no limitations.**
+## INSTALASI: DIBUAT BUAT NON-TECHNICAL USERS
+
+**Step 1: Download (2 menit)**
+Buka GitHub repository, download installer buat OS kamu.
+
+**Step 2: Install (2 menit)**
+Windows: Double-click installer → Next → Install
+Linux: `sudo dpkg -i` atau `sudo rpm -i`
+
+**Step 3: Jalankan (1 menit)**
+Buka Autotube, pilih mode, drag file, klik tombol.
+
+**Total: Sekitar 5 menit setup.**
 
 ---
 
-## INSTALASI: DESIGNED UNTUK NON-TECHNICAL USERS
+## GARANSI (ATAU SEDEKAT MUNGKIN BUAT FREE SOFTWARE)
 
-**Kami test instalasi process dengan 50 users (berbagai level technical skills).**
+Nggak bisa offer money-back guarantee karena software gratis.
 
-**Test Group:**
-- 20 users "tidak teknis" (never use command line)
-- 20 users "medium" (bisa install software biasa)
-- 10 users "advanced" (developer/IT)
+**Tapi bisa offer ini:**
 
-**Result:**
-
-| User Level | Avg Install Time | Success Rate | Need Help |
-|------------|------------------|--------------|-----------|
-| Tidak teknis | 6 menit 30 detik | 95% | 5% (FFmpeg manual install) |
-| Medium | 4 menit 10 detik | 100% | 0% |
-| Advanced | 3 menit 20 detik | 100% | 0% |
-
-**Average: 4 menit 40 detik untuk setup complete.**
-
-**5% yang need help adalah Windows users dengan antivirus yang block FFmpeg download. Solution: Whitelist FFmpeg di antivirus (kami provide instructions).**
-
----
-
-## GARANSI KAMI (ATAU SEDEKAT MUNGKIN UNTUK FREE SOFTWARE)
-
-Kami tidak bisa offer money-back guarantee karena software gratis.
-
-**Tapi kami offer ini:**
-
-**#1: Transparency Guarantee**
-Source code di GitHub. Kalau ada bug atau issue, Anda bisa see exactly what's happening. No black box.
+**#1: Transparency**
+Source code di GitHub. Kalau ada bug, bisa lihat exactly apa yang terjadi.
 
 **#2: No Lock-In**
-File output standard format (MP4, MP3). Bisa dipakai dimana saja. Tidak ada proprietary format yang lock Anda ke software kami.
+File output format standar (MP4, MP3). Bisa dipakai dimana aja.
 
 **#3: Active Development**
-Kami commit untuk:
-- Fix critical bugs dalam 48 jam
-- Respond GitHub issues dalam 24 jam (weekdays)
-- Release updates minimal quarterly
+Commit untuk fix critical bugs dan respond GitHub issues.
 
 **#4: Community Support**
-GitHub discussions untuk sharing tips, troubleshooting, dan feature requests.
+GitHub discussions buat sharing tips dan troubleshooting.
 
-**Worst case scenario:**
-Software tidak sesuai harapan → Uninstall dalam 2 klik. Tidak ada money lost. Tidak ada time wasted (karena install cuma 5 menit).
+**Worst case:**
+Software nggak sesuai harapan → Uninstall. Nggak ada uang hilang.
 
-**Best case scenario:**
-Anda save 10-20 jam per minggu, equivalent dengan Rp 5-20 juta per tahun.
+**Best case:**
+Kamu hemat berjam-jam per minggu.
 
-**Risk: 5 menit. Reward: Rp jutaan per tahun.**
+**Risk: 5 menit. Reward: Jam kerja tersimpan.**
 
 ---
 
-## ACTION STEPS: APA YANG HARUS ANDA LAKUKAN SEKARANG?
+## ACTION STEPS: APA YANG HARUS DILAKUKAN SEKARANG?
 
-**Kami tidak minta Anda untuk "believe" atau "trust".**
+**Nggak minta kamu buat "percaya".**
 
-**Kami minta Anda untuk TEST.**
+**Minta kamu buat TEST.**
 
 **Step 1:** Download Autotube dari GitHub (2 menit)
 
-**Step 2:** Install di komputer Anda (3 menit)
+**Step 2:** Install di komputer kamu (3 menit)
 
 **Step 3:** Test salah satu mode:
-- **Mode A:** Ambil video 10 detik, buat loop → Time it
-- **Mode B:** Download 5 URLs dengan normalize → Compare quality
-- **Mode C:** Combine 5 audio files jadi video → Check output
+- **Mode A:** Ambil video, bikin loop → Hitung waktunya
+- **Mode B:** Download 5 URLs dengan normalize → Cek kualitasnya
+- **Mode C:** Combine 5 audio files jadi video → Cek hasilnya
 
-**Step 4:** Compare hasil dengan workflow lama Anda
+**Step 4:** Compare hasil dengan workflow lama kamu
 
-**Step 5:** Decide berdasarkan evidence, bukan marketing copy
+**Step 5:** Decide berdasarkan hasil, bukan marketing copy
 
-**Total time untuk test: 15-20 menit**
+**Total waktu test: 15-20 menit**
 
-**Kalau setelah test Anda rasa tidak berguna → Uninstall.**
+**Kalau setelah test kamu rasa nggak berguna → Uninstall.**
 
-**Kalau after test Anda save 1+ jam → Keep using, share ke teman.**
+**Kalau after test kamu hemat 1+ jam → Keep using, share ke teman.**
 
 ---
 
-## FINAL WORD
+## PENUTUP
 
-Kami tidak minta Anda percaya copywriting ini.
+Nggak minta kamu percaya copywriting ini.
 
-Kami minta Anda **TEST** software ini.
+Minta kamu **TEST** software ini.
 
-**Karena itu scientific approach:**
-1. Hypothesis: "Autotube akan save waktu saya"
-2. Test: Install dan pakai untuk 1 minggu
-3. Measure: Berapa jam yang saved?
-4. Conclusion: Berdasarkan data, bukan feelings
+**Karena itu pendekatan yang masuk akal:**
+1. Hypothesis: "Autotube bakal hemat waktu"
+2. Test: Install dan pakai seminggu
+3. Ukur: Berapa jam yang saved?
+4. Kesimpulan: Berdasarkan data, bukan feeling
 
-**If test result = positive → Keep using**
-**If test result = negative → Uninstall**
+**Kalau test result = positif → Keep using**
+**Kalau test result = negatif → Uninstall**
 
-**Simple. Scientific. No emotions.**
+**Simple. Practical. Nggak pake emosi.**
 
 ---
 
 **DOWNLOAD AUTOTUBE**
 [GitHub Repository Link]
 
-**Test. Measure. Decide.**
-
----
-
-### APPENDIX: TEST METHODOLOGY DETAILS
-
-Untuk yang ingin know exactly bagaimana kami test:
-
-**Sampling Method:** Random selection dari 300 survey responders
-**Sample Size:** n=20 per group (adequate untuk 95% confidence level)
-**Duration:** 2 weeks test period per group
-**Variables Measured:** Time (seconds), Quality (1-10 scale), Error rate (%)
-**Control Variables:** Same hardware specs, same internet speed, same input files
-**Statistical Analysis:** T-test untuk compare means, p-value < 0.05 untuk significance
-
-**Result available di GitHub repository untuk audit.**
+**Test. Ukur. Putuskan.**
 
 ---
 

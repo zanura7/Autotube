@@ -1,106 +1,106 @@
 # AUTOTUBE COPYWRITING
-## GARY HALBERT STYLE
-### "The Prince of Print" - Direct, Personal, Emotional, Conversational
+## GAYA GARY HALBERT
+### "The Prince of Print" - Direct, Personal, Kayak Ngobrol, Emotional
 
 ---
 
 ## HEADLINE:
 
-**"Teman yang Baik, Apakah Anda Salah Satu dari 'Unlucky Majority' yang Membuang 15+ Jam Per Minggu untuk Repetitive Video Tasks yang Bisa Selesai dalam 20 Menit... Atau Apakah Anda Ready untuk Join 'Elite 3%' yang Sudah Tahu Rahasia Ini?"**
+**"Sobat, Apa Kamu Salah Satu Content Creator yang Habiskan Berjam-jam Tiap Minggu Buat Kerjaan Repetitif yang Sebenarnya Bisa Selesai dalam 20 Menit... Atau Kamu Sudah Tahu Cara Lebih Smart?"**
 
 ---
 
-## Dear Friend,
+## Halo,
 
-Boleh saya jujur sama Anda?
+Boleh jujur sama kamu?
 
-Saya tidak kenal Anda personally. Tapi saya tahu beberapa hal tentang Anda.
+Aku nggak kenal kamu personally. Tapi aku tahu beberapa hal tentang kamu.
 
-**Saya tahu bahwa:**
+**Aku tahu bahwa:**
 
-Anda seorang content creator. Mungkin YouTuber, mungkin manage social media, mungkin podcast producer.
+Kamu seorang content creator. Mungkin YouTuber, mungkin manage social media, mungkin podcast producer.
 
-Anda passionate tentang content Anda. Anda punya ide-ide bagus. Anda tahu value yang Anda bisa berikan ke audience.
+Kamu passionate soal konten kamu. Kamu punya ide-ide bagus. Kamu tahu value yang bisa kamu kasih ke audience.
 
 **Tapi...**
 
-Anda frustrated.
+Kamu frustrasi.
 
-Karena ide-ide di kepala Anda moves lebih cepat dari kemampuan Anda untuk execute.
+Karena ide-ide di kepala kamu moves lebih cepat dari kemampuan kamu buat execute.
 
-Anda pengen upload 3 video per minggu. Reality? Anda barely bisa 1 video per minggu.
+Kamu pengen upload 3 video per minggu. Reality? Kamu barely bisa 1 video per minggu.
 
 **Dan kenapa?**
 
-Bukan karena Anda tidak punya ide.
-Bukan karena Anda tidak punya skill.
+Bukan karena kamu nggak punya ide.
+Bukan karena kamu nggak punya skill.
 
-**Karena 80% waktu Anda habis untuk BORING, REPETITIVE, SOUL-CRUSHING TECHNICAL WORK.**
+**Karena 80% waktu kamu habis buat KERJAAN TEKNIS YANG REPETITIF DAN MEMBOSANKAN.**
 
-Download video. Wait. Edit loop. Adjust. Adjust lagi. Render. Wait lagi.
+Download video. Tunggu. Edit loop. Adjust. Adjust lagi. Render. Tunggu lagi.
 
-Normalize audio satu-per-satu. Import. Process. Export. Repeat. Repeat. Repeat.
+Normalize audio satu-satu. Import. Process. Export. Ulangi. Ulangi. Ulangi.
 
-**Am I right?**
+**Bener kan?**
 
 ---
 
-## CERITA SAYA (DAN KENAPA SAYA BUAT INI)
+## CERITA AKU (DAN KENAPA AKU BIKIN INI)
 
-Nama saya... well, itu tidak penting.
+Nama aku... well, itu nggak penting.
 
-Yang penting adalah saya juga content creator. Dan 2 tahun lalu, saya di posisi SAMA dengan Anda sekarang.
+Yang penting adalah aku juga content creator. Dan 2 tahun lalu, aku di posisi SAMA dengan kamu sekarang.
 
-Saya punya channel YouTube. Niche lofi music. Potensinya huge—audience besar, monetization bagus.
+Aku punya channel YouTube. Niche lofi music. Potensinya besar—audience luas, monetization bagus.
 
-**Tapi saya stuck.**
+**Tapi aku stuck.**
 
-Setiap video butuh:
-- 3 jam untuk download 30 lagu
-- 2 jam untuk normalize audio
-- 1 jam untuk arrange di timeline
-- 1 jam untuk render
+Tiap video butuh:
+- 3 jam buat download 30 lagu
+- 2 jam buat normalize audio
+- 1 jam buat arrange di timeline
+- 1 jam buat render
 
-**7 jam untuk 1 video.**
+**7 jam buat 1 video.**
 
-Saya kerja 9-to-5 job. After work, saya punya 3-4 jam free time.
+Aku kerja kantoran. After work, aku punya 3-4 jam free time.
 
-Math-nya simple: **Saya cuma bisa produce 2-3 video per MONTH.**
+Hitungannya simple: **Aku cuma bisa produce 2-3 video per BULAN.**
 
-Sementara competitors yang full-time? Mereka upload 10-15 video per month.
+Sementara competitors yang full-time? Mereka upload 10-15 video per bulan.
 
-**Algorithm favoritism jelas.**
+**Jelas aja algorithm favoritism-nya beda.**
 
-Competitors grow. Channel saya stuck di 2K subscribers selama 8 bulan.
+Competitors grow. Channel aku stuck di 2K subscribers selama 8 bulan.
 
-Frustrating? **HELL YES.**
+Frustrasi? **BANGET.**
 
 ---
 
 ## TURNING POINT
 
-Suatu malam, jam 2 pagi, saya masih di depan komputer.
+Suatu malam, jam 2 pagi, aku masih di depan komputer.
 
-Waiting render video selesai.
+Nunggu render video selesai.
 
-Dan saya berpikir:
+Dan aku mikir:
 
-**"This is STUPID."**
+**"Ini BODOH banget."**
 
-Saya software engineer by day. Saya tahu automation. Saya tahu scripting.
+Aku software engineer di kantor. Aku tahu automation. Aku tahu scripting.
 
-**Kenapa saya melakukan repetitive manual work seperti robot?**
+**Kenapa aku melakukan repetitive manual work kayak robot?**
 
-"Kenapa tidak buat robot yang ACTUALLY DO THE WORK?"
+"Kenapa nggak bikin robot yang BENERAN DO THE WORK?"
 
-Long story short: Saya spent 2 minggu (malam dan weekend) untuk develop prototype automation script.
+Cerita panjang singkat: Aku spent 2 minggu (malam dan weekend) buat develop prototype automation script.
 
 Bash script sederhana yang:
 - Batch download dengan yt-dlp
 - Auto-normalize dengan FFmpeg
 - Auto-compile jadi video
 
-**Result?**
+**Hasilnya?**
 
 Task yang biasanya 7 jam → **Selesai dalam 22 menit.**
 
@@ -108,9 +108,9 @@ Task yang biasanya 7 jam → **Selesai dalam 22 menit.**
 
 ---
 
-## WHAT HAPPENED NEXT
+## YANG TERJADI SETELAHNYA
 
-Dengan automation, saya suddenly bisa produce 10-12 video per month (sambil tetap kerja full-time).
+Dengan automation, aku tiba-tiba bisa produce 10-12 video per bulan (sambil tetap kerja full-time).
 
 Consistency naik.
 Algorithm notice.
@@ -123,187 +123,186 @@ Recommendations increased.
 
 **Channel finally GROWING.**
 
-Dan feeling-nya?
+Dan feelingnya?
 
 **LIBERATING.**
 
-Bukan lagi "Saya tidak punya waktu."
+Bukan lagi "Aku nggak punya waktu."
 
-Sekarang "Saya punya terlalu banyak waktu—apa lagi yang bisa saya create?"
+Sekarang "Aku punya terlalu banyak waktu—apa lagi yang bisa aku create?"
 
 ---
 
-## KENAPA SAYA SHARE INI KE ANDA?
+## KENAPA AKU SHARE INI KE KAMU?
 
 Oke, jujur lagi.
 
-Saya bisa keep this private. Competitive advantage buat channel saya sendiri.
+Aku bisa keep this private. Competitive advantage buat channel aku sendiri.
 
 **Tapi...**
 
-Beberapa teman sesama creator tahu saya punya automation tools. Mereka minta akses.
+Beberapa teman sesama creator tahu aku punya automation tools. Mereka minta akses.
 
-Saya share script saya.
+Aku share script aku.
 
-Response mereka? **"HOLY SHIT, THIS IS AMAZING. Tapi... bisa tidak dibuat yang ada UI? Saya tidak ngerti command line."**
+Response mereka? **"HOLY SHIT, THIS IS AMAZING. Tapi... bisa nggak dibuat yang ada UI? Aku nggak ngerti command line."**
 
 Ah. Right.
 
-Tidak semua creator adalah programmer.
+Nggak semua creator adalah programmer.
 
-**Jadi saya develop Autotube.**
+**Jadi aku develop Autotube.**
 
-Same automation power. Tapi dengan **GUI yang user-friendly**.
+Power automation yang sama. Tapi dengan **GUI yang user-friendly**.
 
-Drag and drop. Click button. Done.
+Drag and drop. Klik button. Done.
 
 **No coding. No command line. No technical knowledge needed.**
 
 ---
 
-## APA YANG AUTOTUBE LAKUKAN UNTUK ANDA?
+## APA YANG AUTOTUBE LAKUKAN BUAT KAMU?
 
-Look, saya tidak mau bullshit Anda dengan marketing jargon.
+Look, aku nggak mau bullshit kamu dengan marketing jargon.
 
 **Ini simple:**
 
-Autotube mengambil **repetitive tasks yang memakan 15+ jam per minggu** dan menyelesaikannya dalam **20-30 menit.**
+Autotube ambil **repetitive tasks yang makan berjam-jam per minggu** dan selesaiin dalam **20-30 menit.**
 
 **Specifically:**
 
 ### **TASK #1: Video Loop Creation**
 
-**Old way:**
+**Cara lama:**
 - Import video ke Premiere
-- Find cut point
+- Cari cut point
 - Apply crossfade
 - Adjust timing
 - Render
-- Repeat kalau masih kelihatan cut
+- Ulangi kalau masih kelihatan cut
 
-**Time: 30-45 menit per video**
+**Waktu: 30-45 menit per video**
 
-**Autotube way:**
+**Cara Autotube:**
 - Drag video file
-- Click "Create Loop"
+- Klik "Create Loop"
 - Done
 
-**Time: 30 detik per video**
+**Waktu: 30 detik per video**
 
-**Anda bisa buat 20 loops dalam waktu yang dulu cuma buat 1 loop.**
+**Kamu bisa bikin 20 loops dalam waktu yang dulu cuma buat 1 loop.**
 
 ---
 
 ### **TASK #2: Batch Download + Normalization**
 
-**Old way:**
+**Cara lama:**
 - Copy URL
 - Paste ke downloader
-- Click download
-- Wait
-- Repeat 49x lagi
-- Then normalize EACH file manually di Audacity
+- Klik download
+- Tunggu
+- Ulangi 49x lagi
+- Terus normalize TIAP file manually di Audacity
 
-**Time: 3-4 jam untuk 50 files**
+**Waktu: 3-4 jam buat 50 files**
 
-**Autotube way:**
+**Cara Autotube:**
 - Copy semua 50 URLs
 - Paste ke Autotube
 - Select format + normalize option
-- Click "Start"
-- Go grab coffee
+- Klik "Start"
+- Ambil kopi
 
-**Time: 20-30 menit (automated while you do other things)**
+**Waktu: 20-30 menit (automated sambil kamu kerja lain)**
 
-**Same result. 90% less time.**
+**Hasil sama. 90% lebih cepat.**
 
 ---
 
 ### **TASK #3: Video Compilation dari Audio Files**
 
-**Old way:**
-- Import 30 audio files satu-per-satu
+**Cara lama:**
+- Import 30 audio files satu-satu
 - Drag ke timeline
 - Import visual
 - Adjust duration
 - Export settings
-- Render (wait 30-60 min)
+- Render (tunggu 30-60 min)
 
-**Time: 2-3 jam**
+**Waktu: 2-3 jam**
 
-**Autotube way:**
+**Cara Autotube:**
 - Select audio folder
 - Select visual background
-- Click "Generate Video"
-- Processing happens automatically
+- Klik "Generate Video"
+- Processing otomatis
 
-**Time: 5-10 menit**
+**Waktu: 5-10 menit**
 
-**2 jam saved. EVERY. SINGLE. TIME.**
+**2 jam saved. TIAP. KALI.**
 
 ---
 
-## BERAPA VALUE 15 JAM PER MINGGU?
+## BERAPA VALUE WAKTU YANG KAMU HEMAT?
 
 Mari kita hitung.
 
-**Scenario conservatif:**
+**Scenario konservatif:**
 
-Anda menghemat **15 jam per minggu** dengan Autotube.
+Kamu hemat **15 jam per minggu** dengan Autotube.
 
 15 jam × 4 minggu = **60 jam per bulan**
 
 **Option A: Monetize jam tersebut**
 
-Kalau Anda freelance editor/creator dengan rate Rp 75.000/jam:
+Kalau kamu freelance editor/creator dengan rate Rp 75.000/jam:
 60 jam × Rp 75.000 = **Rp 4.5 juta per bulan**
 
-Kalau rate Anda Rp 100.000/jam:
+Kalau rate kamu Rp 100.000/jam:
 60 jam × Rp 100.000 = **Rp 6 juta per bulan**
 
 **Per tahun: Rp 54 - 72 juta.**
 
 **Option B: Invest ke content creation**
 
-60 jam lebih per bulan untuk:
+60 jam lebih per bulan buat:
 - Produce 3-4x more content
 - Research & planning
 - Optimize SEO
-- Engage dengan audience
+- Engage sama audience
 
-Result: **Faster channel growth, more subscribers, more revenue.**
+Result: **Channel growth lebih cepat, more subscribers, more revenue.**
 
-**Either way, value-nya MASSIVE.**
+**Either way, value-nya BESAR.**
 
 ---
 
 ## "OKAY, KEDENGARANNYA BAGUS. TAPI BERAPA HARGANYA?"
 
-**Ini bagian yang akan SHOCK Anda.**
+**Ini bagian yang bakal SHOCK kamu.**
 
-Software dengan functionality seperti ini di market harganya:
+Software dengan functionality kayak gini di market harganya:
 
-- VideoProc: Rp 900.000/tahun
-- 4K Video Downloader: Rp 1.2 juta/tahun
-- Kapwing Pro: Rp 2.4 juta/tahun
+- Software editing: Rp 500.000 - 2 juta/tahun
+- Automation tools: Rp 1-3 juta/tahun
 
-Average: **Rp 1.5 juta per tahun.**
+Average: **Rp 1-2 juta per tahun.**
 
-Dan Anda tahu berapa harga Autotube?
+Dan kamu tahu berapa harga Autotube?
 
-**Rp 1.5 juta?**
+**Rp 2 juta?**
 
-Tidak.
+Nggak.
 
-**Rp 900.000?**
+**Rp 1 juta?**
 
-Tidak.
+Nggak.
 
 **Rp 500.000?**
 
-Tidak.
+Nggak.
 
-### **GRATIS. ZERO. NADA. KOSONG.**
+### **GRATIS. ZERO. KOSONG.**
 
 **Selamanya.**
 
@@ -311,96 +310,96 @@ Tidak.
 
 ## "WAIT, WHAT? KOK GRATIS? ADA CATCH-NYA?"
 
-Saya tahu reaksi Anda.
+Aku tahu reaksi kamu.
 
-"Kalau gratis, berarti saya adalah produknya."
+"Kalau gratis, berarti aku adalah produknya."
 
 **NOT THIS TIME.**
 
-Look, saya buat ini untuk solve masalah saya sendiri first. Ternyata solve masalah 1000+ creators lain juga.
+Look, aku bikin ini buat solve masalah aku sendiri dulu. Ternyata solve masalah banyak creator lain juga.
 
-Saya bisa:
+Aku bisa:
 
-**Option A:** Monetize dengan subscription $29/bulan → Make Rp 30-50 juta/bulan dari 1000 users
+**Option A:** Monetize dengan subscription → Make money
 
-**Option B:** Release gratis as open-source → Make Rp 0, tapi help thousands of creators
+**Option B:** Release gratis as open-source → Make Rp 0, tapi help banyak creators
 
-**Saya pilih Option B.**
+**Aku pilih Option B.**
 
 **Why?**
 
-Karena saya already punya main income dari 9-to-5 job saya.
+Karena aku already punya main income dari kerja kantoran.
 
-Karena saya genuinely believe **good tools should be accessible untuk semua orang**, bukan cuma yang punya budget.
+Karena aku genuinely believe **good tools should be accessible buat semua orang**, bukan cuma yang punya budget.
 
-Karena saya remember feeling stuck dulu—dan kalau saya bisa help orang lain avoid frustration yang sama, **that's reward enough**.
+Karena aku remember feeling stuck dulu—dan kalau aku bisa help orang lain avoid frustration yang sama, **that's reward enough**.
 
 **Plus:**
 
-Open source = No server costs (process locally di komputer Anda)
-= No need untuk subscription untuk cover overhead
+Open source = Nggak ada server costs (process locally di komputer kamu)
+= Nggak perlu subscription buat cover overhead
 
 **Makes sense, kan?**
 
 ---
 
-## "OKAY, TAPI... APAKAH INI LEGAL?"
+## "OKAY, TAPI... APA INI LEGAL?"
 
-**Great question. Dan saya appreciate Anda asking.**
+**Great question. Dan aku appreciate kamu tanya.**
 
 **Short answer: YES, legal.**
 
 **Long answer:**
 
-**FFmpeg** (engine di balik Autotube) adalah **open-source dengan LGPL license**. Legal untuk personal & commercial use.
+**FFmpeg** (engine di balik Autotube) adalah **open-source dengan LGPL license**. Legal buat personal & commercial use.
 
-Jutaan software worldwide menggunakan FFmpeg. Termasuk YouTube sendiri.
+Jutaan software worldwide pakai FFmpeg. Termasuk YouTube sendiri.
 
-**yt-dlp** (untuk download functionality) juga **open-source**. Legal to use.
+**yt-dlp** (buat download functionality) juga **open-source**. Legal to use.
 
 **BUT:**
 
 YouTube Terms of Service technically melarang download konten tanpa izin.
 
-**Jadi responsibility Anda:**
+**Jadi responsibility kamu:**
 
-Gunakan untuk download konten yang:
-- Anda own the rights
+Pakai buat download konten yang:
+- Kamu own the rights
 - Public domain / Creative Commons
-- Anda sudah dapat permission dari creator
+- Kamu udah dapat permission dari creator
 
-**Autotube adalah TOOL.** Seperti hammer.
+**Autotube adalah TOOL.** Kayak hammer.
 
-Hammer legal. Tapi kalau Anda pakai untuk vandalisme, that's on you.
+Hammer legal. Tapi kalau kamu pakai buat vandalisme, that's on you.
 
 **Use responsibly. Use ethically.**
 
 ---
 
-## "APAKAH SAYA BUTUH KOMPUTER MAHAL?"
+## "APA AKU BUTUH KOMPUTER MAHAL?"
 
 **Absolutely NOT.**
 
-Saya test Autotube di laptop tua saya: **HP 14s dengan Core i3, 8GB RAM, HDD.**
+Aku test Autotube di laptop lama aku: **HP 14s dengan Core i3, 8GB RAM, HDD.**
 
 **Works perfectly fine.**
 
-Loop 10-min video: 43 detik
-Download 10 MP3: 8 menit
-Compile video: 6 menit
+Loop 10-min video: sekitar 43 detik
+Download 10 MP3: sekitar 8 menit
+Compile video: sekitar 6 menit
 
-**Tidak butuh:**
+**Nggak butuh:**
 - RTX graphics card
 - 32GB RAM
 - Gaming PC
 
-**Kalau komputer Anda bisa run Windows 10/11 atau Linux, Anda good to go.**
+**Kalau komputer kamu bisa run Windows 10/11 atau Linux, kamu good to go.**
 
 ---
 
-## "SAYA TIDAK TEKNIS. APAKAH SAYA BISA PAKAI?"
+## "AKU NGGAK TEKNIS. APA AKU BISA PAKAI?"
 
-**INI LITERALLY DIRANCANG UNTUK NON-TECHNICAL PEOPLE.**
+**INI LITERALLY DIBUAT BUAT NON-TECHNICAL PEOPLE.**
 
 Interface-nya simple:
 
@@ -409,73 +408,56 @@ Interface-nya simple:
 - Mode B: Mass Downloader
 - Mode C: Video Generator
 
-**Each mode:**
+**Tiap mode:**
 - Drag & drop file (atau paste URLs)
-- Click 1 tombol
-- Wait processing selesai
+- Klik 1 tombol
+- Tunggu processing selesai
 - Done
 
-**Tidak ada:**
+**Nggak ada:**
 - Command line
 - Configuration files
 - Technical jargon
 - Complicated settings
 
-**Kalau Anda bisa:**
+**Kalau kamu bisa:**
 - Copy-paste text
 - Drag file
-- Click button
+- Klik button
 
-**Anda bisa pakai Autotube.**
+**Kamu bisa pakai Autotube.**
 
-**I PROMISE.**
+**AKU JAMIN.**
 
 ---
 
 ## REAL TALK: SIAPA YANG SEBAIKNYA PAKAI AUTOTUBE?
 
-**Autotube PERFECT untuk Anda kalau:**
+**Autotube PERFECT buat kamu kalau:**
 
-✓ Anda content creator yang produce video/audio content regularly
+✓ Kamu content creator yang produce video/audio content regularly
 
-✓ Anda spend 10+ jam per minggu untuk repetitive editing tasks
+✓ Kamu spend 10+ jam per minggu buat repetitive editing tasks
 
-✓ Anda pengen scale content production tapi tidak punya budget untuk hire team
+✓ Kamu pengen scale content production tapi nggak punya budget buat hire team
 
-✓ Anda value waktu Anda dan ingin fokus ke **creative work**, bukan technical grunt work
+✓ Kamu value waktu kamu dan ingin fokus ke **creative work**, bukan technical grunt work
 
-✓ Anda manage multiple channels atau clients
+✓ Kamu manage multiple channels atau clients
 
-**Autotube NOT untuk Anda kalau:**
+**Autotube NOT buat kamu kalau:**
 
-✗ Anda cuma buat 1 video per bulan (overhead install tidak worth it)
+✗ Kamu cuma bikin 1 video per bulan (overhead install nggak worth it)
 
-✗ Anda LOVE spending hours di manual editing (some people do, respect)
+✗ Kamu LOVE spending hours di manual editing (some people do, respect)
 
-✗ Anda sudah punya team editors yang handle semua technical tasks
+✗ Kamu udah punya team editors yang handle semua technical tasks
 
-**Be honest dengan diri Anda.**
+**Be honest sama diri kamu.**
 
-Kalau Anda di kategori pertama → **Download sekarang.**
+Kalau kamu di kategori pertama → **Download sekarang.**
 
 Kalau di kategori kedua → **This is not for you. No hard feelings.**
-
----
-
-## TESTIMONIAL (REAL PEOPLE, REAL RESULTS)
-
-**"Dulu saya butuh 2 hari untuk produce 1 video compilation. Sekarang? 15 menit. Channel saya from 800 subs to 15K subs dalam 4 bulan. Autotube literally changed my content game."**
-— Rizky, Lofi Channel (15K subs)
-
----
-
-**"As social media manager untuk 8 clients, saya overwhelmed dengan video requests. Autotube save my ass. Saya sekarang bisa deliver 3x faster tanpa quality drop. Clients happy, saya happy."**
-— Sarah, Social Media Manager
-
----
-
-**"Saya skeptis dulu. 'Automation pasti quality-nya jelek.' WRONG. Quality sama/better, speed insane. Game changer buat indie creator kayak saya."**
-— Andi, Music Producer
 
 ---
 
@@ -483,7 +465,7 @@ Kalau di kategori kedua → **This is not for you. No hard feelings.**
 
 Look, content creation adalah **competition**.
 
-Competition untuk attention. Untuk subscribers. Untuk algorithm favoritism.
+Competition buat attention. Buat subscribers. Buat algorithm favoritism.
 
 **Dan di competition, advantage matters.**
 
@@ -491,36 +473,36 @@ Athlete pakai better equipment.
 Gamers pakai better gear.
 **Creators should use better tools.**
 
-**Autotube adalah unfair advantage Anda.**
+**Autotube adalah unfair advantage kamu.**
 
-Sementara competitors Anda spend 15 jam per minggu untuk manual tasks, **Anda spend 30 menit** dan use sisa 14.5 jam untuk:
+Sementara competitors kamu spend 15 jam per minggu buat manual tasks, **kamu spend 30 menit** dan use sisa 14.5 jam buat:
 
 - Produce more content
 - Better quality
 - Better strategy
 - Better engagement
 
-**3 months from now:**
+**3 bulan dari sekarang:**
 
 Competitors: "Kok dia bisa produktif banget?"
 
-Anda: **Secretly smiling. Because you know the secret.**
+Kamu: **Secretly smiling. Karena kamu tahu rahasianya.**
 
 ---
 
-## WHAT'S THE CATCH? (REAL TALK)
+## APA CATCH-NYA? (REAL TALK)
 
-Okay, karena saya promise transparency, here's the **honest drawbacks:**
+Okay, karena aku promise transparency, here's the **honest drawbacks:**
 
-**Drawback #1: Learning curve (small)**
+**Drawback #1: Learning curve (kecil)**
 
-First time pakai, Anda butuh 10-15 menit untuk familiarize dengan interface.
+Pertama kali pakai, kamu butuh 10-15 menit buat familiarize dengan interface.
 
-**Solution:** Dokumentasi lengkap dalam Bahasa Indonesia included.
+**Solution:** Dokumentasi lengkap Bahasa Indonesia included.
 
 ---
 
-**Drawback #2: Processing time tidak instant**
+**Drawback #2: Processing time nggak instant**
 
 Batch download 50 files tetap butuh 20-30 menit (walaupun automated).
 
@@ -532,132 +514,132 @@ Batch download 50 files tetap butuh 20-30 menit (walaupun automated).
 
 Mungkin ada bugs. Mungkin ada edge cases yang belum covered.
 
-**Solution:** Active GitHub community. Bug reports usually di-fix dalam 48 jam.
+**Solution:** Active GitHub community. Bug reports usually di-fix cepat.
 
 ---
 
 **That's it.**
 
-Tidak ada hidden fees. Tidak ada malware. Tidak ada data harvesting.
+Nggak ada hidden fees. Nggak ada malware. Nggak ada data harvesting.
 
 **What you see is what you get.**
 
 ---
 
-## THE SIMPLE QUESTION
+## SATU PERTANYAAN SIMPLE
 
-Saya mau tanya Anda satu pertanyaan simple:
+Aku mau tanya kamu satu pertanyaan simple:
 
-**"Apakah Anda lebih suka:**
+**"Apa kamu lebih suka:**
 
-**A) Spend 15 jam per minggu untuk repetitive manual tasks, atau**
+**A) Spend 15 jam per minggu buat repetitive manual tasks, atau**
 
-**B) Spend 30 menit per minggu untuk automated tasks, dan use 14.5 jam untuk hal lain yang lebih valuable?"**
+**B) Spend 30 menit per minggu buat automated tasks, dan use 14.5 jam buat hal lain yang lebih valuable?"**
 
-**Kalau jawaban Anda adalah B...**
+**Kalau jawaban kamu adalah B...**
 
-**Kenapa Anda belum download Autotube?**
+**Kenapa kamu belum download Autotube?**
 
 ---
 
-## WHAT HAPPENS IF YOU DON'T TAKE ACTION?
+## APA YANG TERJADI KALAU KAMU NGGAK AMBIL AKSI?
 
-Saya tidak mau scare tactics.
+Aku nggak mau pake scare tactics.
 
 Tapi **reality check:**
 
-**6 bulan dari sekarang**, salah satu dari 2 hal akan terjadi:
+**6 bulan dari sekarang**, salah satu dari 2 hal bakal terjadi:
 
 **Scenario 1:**
 
-Anda continue manual workflow. Still stuck di 5-8 video per bulan. Channel growth lambat. Frustration tinggi.
+Kamu continue manual workflow. Masih stuck di 5-8 video per bulan. Channel growth lambat. Frustration tinggi.
 
-Sementara creators yang pakai automation (including Autotube) sudah 3x ahead of you dalam content volume.
+Sementara creators yang pakai automation udah 3x ahead dalam content volume.
 
 Algorithm favor mereka. Subscribers mereka grow faster.
 
-Dan Anda wondering: **"Kenapa saya stuck? Kenapa mereka bisa?"**
+Dan kamu wondering: **"Kenapa aku stuck? Kenapa mereka bisa?"**
 
 ---
 
 **Scenario 2:**
 
-Anda download Autotube hari ini. Integrate ke workflow.
+Kamu download Autotube hari ini. Integrate ke workflow.
 
 15 jam per minggu saved. Content output naik 3x.
 
 Consistency improved. Algorithm notice. Channel grow.
 
-6 bulan from now, Anda **10x ahead** dari posisi Anda sekarang.
+6 bulan from now, kamu **jauh ahead** dari posisi kamu sekarang.
 
-Dan Anda thinking: **"Thank God saya take action waktu itu. Best decision ever."**
-
----
-
-**Which scenario Anda pilih?**
-
-Decision ada di tangan Anda. Right now.
+Dan kamu thinking: **"Thank God aku ambil aksi waktu itu. Best decision ever."**
 
 ---
 
-## HERE'S WHAT TO DO NEXT
+**Scenario mana yang kamu pilih?**
 
-**Step 1:** Buka browser Anda
+Decision ada di tangan kamu. Right now.
+
+---
+
+## INI YANG HARUS KAMU LAKUKAN
+
+**Step 1:** Buka browser kamu
 
 **Step 2:** Go to GitHub repository Autotube (link di bawah)
 
-**Step 3:** Download installer untuk OS Anda (Windows/Linux)
+**Step 3:** Download installer buat OS kamu (Windows/Linux)
 
 **Step 4:** Install (takes 3-5 menit, simple wizard)
 
-**Step 5:** Open Autotube
+**Step 5:** Buka Autotube
 
 **Step 6:** Test salah satu mode:
 - Try loop creator dengan 1 video
 - Try download 5 URLs
 - Try generate compilation dari 5 audio files
 
-**Step 7:** Time it. Compare dengan workflow lama Anda.
+**Step 7:** Hitung waktunya. Compare dengan workflow lama kamu.
 
 **Step 8:** Kalau impressed → Integrate ke daily workflow
 
-**Step 9:** Kalau tidak cocok → Uninstall (no hard feelings)
+**Step 9:** Kalau nggak cocok → Uninstall (no hard feelings)
 
 ---
 
-**Total time investment: 15-20 menit untuk test**
+**Total time investment: 15-20 menit buat test**
 
-**Potential gain: 15+ jam saved per minggu untuk rest of your career**
+**Potential gain: 15+ jam saved per minggu buat sisa karir kamu**
 
 **ROI: Infinite.**
 
 ---
 
-## MY PERSONAL GUARANTEE
+## GARANSI DARI AKU
 
-Look, ini free software. Saya tidak bisa offer "money-back guarantee" karena tidak ada money involved.
+Look, ini free software. Aku nggak bisa offer "money-back guarantee" karena nggak ada uangnya.
 
-**Tapi ini saya bisa guarantee:**
+**Tapi ini aku bisa guarantee:**
 
-**#1:** Software will work as described (assuming Anda follow documentation)
+**#1:** Software will work as described (asalkan kamu ikuti dokumentasi)
 
-**#2:** Kalau ada critical bug, kami will fix ASAP (usually 24-48 jam)
+**#2:** Kalau ada critical bug, bakal di-fix ASAP
 
-**#3:** File Anda 100% safe—processing local, tidak ada upload ke server kami
+**#3:** File kamu 100% safe—processing local, nggak ada upload ke server
 
-**#4:** Tidak ada hidden agenda. Tidak ada data harvesting. Tidak ada future "premium upgrade" bullshit.
+**#4:** Nggak ada hidden agenda. Nggak ada data harvesting. Nggak ada future "premium upgrade" bullshit.
 
 **What you download today is what you get. Forever. Free.**
 
-**I stake my reputation on this.**
+**Aku jamin.**
 
 ---
 
-## ONE LAST THING
+## SATU HAL TERAKHIR
 
-Sebelum Anda decide, saya mau share satu more thing.
+Sebelum kamu decide, aku mau share satu hal lagi.
 
-**The biggest regret dari creators yang saya interview adalah:**
+**Penyesalan terbesar dari creators yang aku interview adalah:**
 
 **"I wish I started using automation tools earlier."**
 
@@ -665,25 +647,25 @@ Bukan "I regret trying automation."
 
 Tapi **"I regret NOT trying sooner."**
 
-**Time adalah aset yang tidak bisa di-refund.**
+**Waktu adalah aset yang nggak bisa di-refund.**
 
-Setiap minggu Anda delay = 15 jam yang tidak akan pernah kembali.
+Tiap minggu kamu delay = 15 jam yang nggak akan pernah kembali.
 
 **Dalam 1 tahun = 780 jam lost.**
 
-780 jam yang bisa dipakai untuk:
+780 jam yang bisa dipakai buat:
 - Produce 200+ more videos
 - Learn new skills
 - Grow your channel
-- Spend time dengan keluarga
+- Spend time sama keluarga
 
 **Gone. Forever.**
 
 ---
 
-## THE MOMENT OF TRUTH
+## MOMENT OF TRUTH
 
-Ini moment dimana Anda decide:
+Ini moment dimana kamu decide:
 
 **Path A: Status Quo**
 
@@ -695,17 +677,17 @@ Result: Nothing changes. Same frustration. Same stuck feeling.
 
 **Path B: Take Action**
 
-Click link di bawah. Download. Install. Test.
+Klik link di bawah. Download. Install. Test.
 
-Result: Potential untuk transform cara Anda create content. Forever.
+Result: Potential buat transform cara kamu create content. Forever.
 
 ---
 
-**Mana yang Anda pilih?**
+**Mana yang kamu pilih?**
 
-Saya hope Path B.
+Aku hope Path B.
 
-Karena saya genuinely want to help you.
+Karena aku genuinely pengen bantu kamu.
 
 **Tapi choice is yours.**
 
@@ -719,13 +701,13 @@ Karena saya genuinely want to help you.
 
 ---
 
-## AFTERTHOUGHT
+## PENUTUP
 
-**P.S.** — Saya spent 2 years developing ini. Ratusan jam coding, testing, debugging. Saya release gratis karena saya believe **good tools should be accessible**. Kalau Anda pakai dan it helps you, **share ke creator lain**. That's all I ask. Help me help others.
+**P.S.** — Aku spent banyak waktu developing ini. Aku release gratis karena aku believe **good tools should be accessible**. Kalau kamu pakai dan it helps you, **share ke creator lain**. That's all I ask. Help aku help others.
 
-**P.P.S.** — Software ini already dipakai 847+ creators. Channel mereka growing. Content mereka scaling. **You could be next.** Atau... you could wonder "what if" 6 bulan from now. **Don't be that person.**
+**P.P.S.** — Software ini udah dipakai banyak creators. Channel mereka growing. Content mereka scaling. **You could be next.** Atau... you could wonder "what if" 6 bulan from now. **Jangan jadi orang itu.**
 
-**P.P.P.S.** — Saya tahu Anda busy. Saya tahu Anda punya 100 things di to-do list. Tapi **15 menit untuk test software ini could be the best 15 menit you spend this month.** Try it. Prove me wrong (or right). Either way, **you win** because at least you KNOW.
+**P.P.P.S.** — Aku tahu kamu busy. Aku tahu kamu punya 100 hal di to-do list. Tapi **15 menit buat test software ini could be the best 15 menit you spend bulan ini.** Try it. Prove me wrong (or right). Either way, **you win** because at least you KNOW.
 
 ---
 
@@ -735,20 +717,20 @@ Karena saya genuinely want to help you.
 
 ---
 
-**P.P.P.P.S.** — Kalau after baca semua ini Anda masih belum convinced... okay, fine. **But do me one favor:** Bookmark page ini. Dan kalau 3 bulan from now Anda still frustrated dengan slow workflow, **come back**. Link masih akan di sini. Software masih gratis. Dan saya will still be here, ready to help.
+**P.P.P.P.S.** — Kalau after baca semua ini kamu masih belum convinced... okay, fine. **But do me one favor:** Bookmark page ini. Dan kalau 3 bulan from now kamu masih frustrated dengan slow workflow, **come back**. Link masih akan di sini. Software masih gratis. Dan aku will still be here, ready to help.
 
 **But I hope you don't wait 3 months.**
 
 **I hope you take action TODAY.**
 
-**Because your future self will thank you.**
+**Karena future self kamu akan thank you.**
 
 ---
 
 *"The single biggest mistake in advertising is not testing." - Gary Halbert*
 
-**Test Autotube. 15 menit. What do you have to lose? (Nothing.)**
+**Test Autotube. 15 menit. Apa yang kamu rugi? (Nothing.)**
 
-**What do you have to gain? (Everything.)**
+**Apa yang kamu gain? (Everything.)**
 
-**Your move, friend.**
+**Your move, sobat.**
