@@ -54,6 +54,7 @@ class LoopCreator:
         cpu_threads="auto",
         progress_callback=None,
         cancel_event=None,
+        output_filename=None,
     ):
         """
         Create a seamless loop from a video
@@ -69,6 +70,7 @@ class LoopCreator:
             cpu_crf: CPU quality (18=best, 23=good, 28=faster)
             cpu_threads: Number of CPU threads to use
             progress_callback: Callback for progress updates
+            output_filename: Optional exact output filename
 
         Returns:
             bool: True if successful, False otherwise
@@ -146,11 +148,14 @@ class LoopCreator:
                 final_video = self.add_audio(final_video, audio_path, target_duration)
 
             # Step 7: Generate output filename
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            output_file = (
-                self.output_folder
-                / f"loop_{video_path.stem}_{target_duration}s_{timestamp}.mp4"
-            )
+            if output_filename:
+                output_file = self.output_folder / output_filename
+            else:
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                output_file = (
+                    self.output_folder
+                    / f"loop_{video_path.stem}_{target_duration}s_{timestamp}.mp4"
+                )
 
             # Step 8: Render final video
             self.log("🎬 Rendering final video...")

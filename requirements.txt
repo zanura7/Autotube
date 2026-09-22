@@ -1,6 +1,14 @@
 # UI Framework
 customtkinter>=5.2.0
 
+# Web API
+fastapi>=0.103.0
+uvicorn[standard]>=0.23.0
+websockets>=11.0.3
+python-multipart>=0.0.6
+apscheduler>=3.10.0
+SQLAlchemy>=2.0
+
 # Media Processing
 ffmpeg-python>=0.2.0
 

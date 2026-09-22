@@ -13,6 +13,8 @@ import json
 class VideoGenerator:
     """Generate final YouTube video from audio playlist and visual"""
 
+    AUDIO_EXTENSIONS = {".mp3", ".m4a", ".wav", ".aac", ".flac", ".ogg", ".wma"}
+
     def __init__(self, output_folder, console_log=None):
         """
         Initialize video generator
@@ -50,6 +52,7 @@ class VideoGenerator:
         generate_chapters=True,
         apply_zoom=True,
         progress_callback=None,
+        output_filename=None,
     ):
         """
         Generate final video
@@ -62,6 +65,7 @@ class VideoGenerator:
             generate_chapters: Whether to generate chapter metadata
             apply_zoom: Whether to apply zoom effect (for images)
             progress_callback: Callback for progress updates
+            output_filename: Optional exact output filename
 
         Returns:
             bool: True if successful, False otherwise
@@ -127,8 +131,11 @@ class VideoGenerator:
             is_image = visual_path.suffix.lower() in [".png", ".jpg", ".jpeg"]
 
             # Step 5: Generate output filename
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            output_file = self.output_folder / f"final_video_{timestamp}.mp4"
+            if output_filename:
+                output_file = self.output_folder / output_filename
+            else:
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                output_file = self.output_folder / f"final_video_{timestamp}.mp4"
 
             # Step 6: Render final video
             self.log("🎬 Rendering final video...")
@@ -221,17 +228,31 @@ class VideoGenerator:
                             audio_files.append(audio_path)
 
         elif audio_folder:
-            # Scan folder for audio files
             audio_folder = Path(audio_folder)
-            audio_extensions = [".mp3", ".m4a", ".wav", ".aac"]
-
-            for ext in audio_extensions:
-                audio_files.extend(audio_folder.glob(f"*{ext}"))
-
-            # Sort by name
-            audio_files.sort()
+            if audio_folder.is_file():
+                if self.is_valid_audio_file(audio_folder):
+                    audio_files.append(audio_folder)
+            elif audio_folder.is_dir():
+                audio_files = [
+                    path for path in audio_folder.iterdir()
+                    if path.is_file() and path.suffix.lower() in self.AUDIO_EXTENSIONS
+                ]
+                audio_files.sort(key=lambda path: path.name.lower())
 
         return audio_files
+
+    def is_valid_audio_file(self, audio_path):
+        """Return whether a path contains a supported audio stream."""
+        audio_path = Path(audio_path)
+        if (not audio_path.is_file()
+                or audio_path.suffix.lower() not in self.AUDIO_EXTENSIONS):
+            return False
+        try:
+            probe = ffmpeg.probe(str(audio_path))
+            return any(stream.get("codec_type") == "audio"
+                       for stream in probe.get("streams", []))
+        except Exception:
+            return False
 
     def create_chapters(self, audio_files):
         """
@@ -263,6 +284,7 @@ class VideoGenerator:
 
     def get_audio_duration(self, audio_path):
         """Get audio duration in seconds"""
+        audio_path = Path(audio_path)
         try:
             probe = ffmpeg.probe(str(audio_path))
             duration = float(probe["format"]["duration"])
@@ -412,6 +434,7 @@ class VideoGenerator:
         resolution,
         is_image=False,
         apply_zoom=False,
+        image_effect=None,
     ):
         """
         Render final video
@@ -424,6 +447,7 @@ class VideoGenerator:
             resolution: Output resolution (e.g., "1920x1080")
             is_image: Whether visual is an image
             apply_zoom: Whether to apply zoom effect (for images)
+            image_effect: Optional zoom, pan, fade, or none effect
 
         Returns:
             bool: True if successful
@@ -441,27 +465,45 @@ class VideoGenerator:
             width, height = map(int, resolution.split("x"))
 
             if is_image:
-                # Image input
                 visual_input = ffmpeg.input(str(visual_path), loop=1, t=duration)
-
-                # Apply zoom effect if requested
-                if apply_zoom:
-                    # Slow zoom in effect
+                effect = (image_effect or ("zoom" if apply_zoom else "none")).lower()
+                if effect == "zoom":
                     visual_stream = visual_input.filter(
                         "zoompan",
                         z="min(zoom+0.0005,1.2)",
-                        d=f"{int(duration * 25)}",
+                        d=1,
                         s=f"{width}x{height}",
                         fps=25,
                     )
+                elif effect == "pan":
+                    frames = max(2, round(duration * 25))
+                    visual_stream = visual_input.filter(
+                        "zoompan",
+                        z="1.12",
+                        x=f"min(on/{frames - 1},1)*(iw-iw/zoom)",
+                        y="ih/2-(ih/zoom/2)",
+                        d=1,
+                        s=f"{width}x{height}",
+                        fps=25,
+                    )
+                elif effect == "fade":
+                    fade_duration = min(1.0, max(0.1, duration / 3))
+                    fade_out_start = max(0, duration - fade_duration)
+                    visual_stream = (
+                        visual_input
+                        .filter("scale", width, height)
+                        .filter("fade", t="in", st=0, d=fade_duration)
+                        .filter("fade", t="out", st=fade_out_start, d=fade_duration)
+                    )
                 else:
-                    # Just scale
                     visual_stream = visual_input.filter("scale", width, height)
             else:
-                # Video input - loop if needed
                 visual_input = ffmpeg.input(str(visual_path), stream_loop=-1)
-                visual_stream = visual_input.filter("scale", width, height).filter(
-                    "trim", duration=duration
+                visual_stream = (
+                    visual_input
+                    .filter("scale", width, height, force_original_aspect_ratio="decrease")
+                    .filter("pad", width, height, "(ow-iw)/2", "(oh-ih)/2")
+                    .filter("trim", duration=duration)
                 )
 
             # Audio input
@@ -470,13 +512,15 @@ class VideoGenerator:
             # Combine
             output = ffmpeg.output(
                 visual_stream,
-                audio_input,
+                audio_input.audio,
                 str(output_path),
                 vcodec="libx264",
                 acodec="aac",
                 preset="medium",
                 crf=23,
                 audio_bitrate="192k",
+                pix_fmt="yuv420p",
+                t=duration,
                 shortest=None,
             )
 
