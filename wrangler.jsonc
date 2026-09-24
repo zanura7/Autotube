@@ -20,7 +20,7 @@
   "vpc_services": [
     {
       "binding": "AUTOTUBE_API",
-      "service_id": "01a0d5a6-3d5e-7730-80bf-8648e4d7491c"
+      "service_id": "01a0d5ce-f978-7103-ac25-b1bef31d7f2d"
     }
   ]
 }
