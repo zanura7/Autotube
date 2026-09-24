@@ -10,7 +10,7 @@ def test_live_compose_has_private_api_and_persistent_media():
     config = yaml.safe_load((ROOT / "docker-compose.live.yml").read_text(encoding="utf-8"))
 
     api = config["services"]["api"]
-    assert api["ports"] == ["127.0.0.1:8000:8000"]
+    assert api["ports"] == ["${AUTOTUBE_HOST_BIND:-127.0.0.1:8090}:8000"]
     assert api["restart"] == "unless-stopped"
     assert {
         "autotube_data:/app/data",

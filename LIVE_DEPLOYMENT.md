@@ -47,10 +47,10 @@ Set **AUTOTUBE_CORS_ORIGINS** to the exact Pages/custom-domain origin, without a
 ~~~bash
 docker compose -f docker-compose.live.yml up -d --build api
 docker compose -f docker-compose.live.yml ps
-curl http://127.0.0.1:8000/health
+curl http://127.0.0.1:8090/health
 ~~~
 
-The host port is bound to **127.0.0.1**, so it is not directly exposed to the Internet. The container intentionally uses one Uvicorn worker because the scheduler and FFmpeg process registry currently live in the API process.
+The host port defaults to **127.0.0.1:8090** and can be changed with **AUTOTUBE_HOST_BIND**, so it is not directly exposed to the Internet. The container intentionally uses one Uvicorn worker because the scheduler and FFmpeg process registry currently live in the API process.
 
 Persistent Docker volumes contain:
 
