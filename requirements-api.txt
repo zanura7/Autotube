@@ -1,7 +1,3 @@
-# UI Framework
-customtkinter>=5.2.0
-
-# Web API
 fastapi>=0.103.0
 uvicorn[standard]>=0.23.0
 websockets>=11.0.3
@@ -9,25 +5,10 @@ python-multipart>=0.0.6
 apscheduler>=3.10.0
 SQLAlchemy>=2.0
 cryptography>=42.0
-
-# Media Processing
 ffmpeg-python>=0.2.0
-
-# Video/Audio Downloader
 yt-dlp>=2023.10.13
-
-# Audio Processing
 pydub>=0.25.1
-
-# Image Processing
 Pillow>=10.0.0
-
-# Audio Normalization
 ffmpeg-normalize>=1.27.0
-
-# Notifications
-plyer>=2.1.0
-
-# Auto-Update
 requests>=2.31.0
 packaging>=23.0

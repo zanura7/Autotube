@@ -1,5 +1,10 @@
 import { createSignal, onMount, onCleanup } from 'solid-js';
 
+const API_BASE = (import.meta.env.VITE_API_BASE_URL || "http://localhost:8000").replace(/\/$/, "");
+const WS_BASE = (import.meta.env.VITE_WS_BASE_URL || API_BASE.replace(/^http/, "ws")).replace(/\/$/, "");
+const apiUrl = (path) => API_BASE + path;
+const apiFetch = (path, options = {}) => fetch(apiUrl(path), { credentials: "include", ...options });
+
 function App() {
   const [activeTab, setActiveTab] = createSignal("Dashboard");
   
@@ -9,16 +14,31 @@ function App() {
   const [progress, setProgress] = createSignal(0);
 
   // Live Stream State
+  const [streamTitle, setStreamTitle] = createSignal("Autotube Live");
   const [streamKey, setStreamKey] = createSignal("");
-  const [videoPaths, setVideoPaths] = createSignal("");
-  const [audioPath, setAudioPath] = createSignal("");
+  const [rtmpUrl, setRtmpUrl] = createSignal("rtmp://a.rtmp.youtube.com/live2");
+  const [liveVisuals, setLiveVisuals] = createSignal([]);
+  const [liveAudios, setLiveAudios] = createSignal([]);
+  const [liveBackgroundType, setLiveBackgroundType] = createSignal("videos");
+  const [liveAudioMode, setLiveAudioMode] = createSignal("replace");
   const [liveStatus, setLiveStatus] = createSignal("Not Running");
+  const [activeStreamId, setActiveStreamId] = createSignal("");
+  const [liveLogs, setLiveLogs] = createSignal([]);
+  const [liveLoop, setLiveLoop] = createSignal(true);
+  const [liveShuffle, setLiveShuffle] = createSignal(false);
+  const [liveAutoRestart, setLiveAutoRestart] = createSignal(true);
+  const [liveResolution, setLiveResolution] = createSignal("1280x720");
+  const [liveFps, setLiveFps] = createSignal(30);
+  const [liveBitrate, setLiveBitrate] = createSignal(2500);
+  const [liveVisualizer, setLiveVisualizer] = createSignal(true);
+  const [liveStyle, setLiveStyle] = createSignal("bars");
+  const [livePosition, setLivePosition] = createSignal("bottom");
+  const [liveSensitivity, setLiveSensitivity] = createSignal(4);
+  const [liveColorOne, setLiveColorOne] = createSignal("#c7ff2e");
+  const [liveColorTwo, setLiveColorTwo] = createSignal("#ff654a");
   const [isScheduled, setIsScheduled] = createSignal(false);
   const [startTime, setStartTime] = createSignal("08:00");
   const [stopTime, setStopTime] = createSignal("17:00");
-  const [isDraggingVideo, setIsDraggingVideo] = createSignal(false);
-  const [isDraggingAudio, setIsDraggingAudio] = createSignal(false);
-
   // Generator State
   const [genMode, setGenMode] = createSignal("simple");
   const [genAudio, setGenAudio] = createSignal("");
@@ -51,8 +71,9 @@ function App() {
   const [genDownload, setGenDownload] = createSignal("");
   const [uploadCount, setUploadCount] = createSignal(0);
   let genPoll;
+  let livePoll;
   let disposed = false;
-  onCleanup(() => { disposed = true; clearTimeout(genPoll); });
+  onCleanup(() => { disposed = true; clearTimeout(genPoll); clearTimeout(livePoll); });
 
   const readResponse = async (res) => {
     const data = await res.json();
@@ -67,7 +88,7 @@ function App() {
 
   const pollGeneration = async (id) => {
     try {
-      const data = await readResponse(await fetch(`http://localhost:8000/api/v1/generator/${id}`));
+      const data = await readResponse(await apiFetch("/api/v1/generator/" + id));
       if (disposed) return;
       if (data.status === "Processing") {
         genPoll = setTimeout(() => pollGeneration(id), 1500);
@@ -75,7 +96,7 @@ function App() {
       }
       setGenBusy(false);
       setGenStatus(data.status === "Completed" ? "Video ready." : "Generation failed. Check the server log for details.");
-      if (data.status === "Completed") setGenDownload(`http://localhost:8000/api/v1/generator/${id}/download`);
+      if (data.status === "Completed") setGenDownload(apiUrl("/api/v1/generator/" + id + "/download"));
       fetchProjects();
     } catch (error) {
       if (disposed) return;
@@ -89,7 +110,7 @@ function App() {
 
   const fetchProjects = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/v1/history/");
+      const res = await apiFetch("/api/v1/history/");
       const data = await res.json();
       setProjects(data.projects);
     } catch(e) {
@@ -97,9 +118,25 @@ function App() {
     }
   };
 
+  const restoreActiveLive = async () => {
+    try {
+      const data = await readResponse(await apiFetch("/api/v1/livestream/active"));
+      const stream = data.streams?.[0];
+      if (!stream) return;
+      setActiveStreamId(stream.id);
+      setLiveStatus(stream.status === "live"
+        ? "Live · PID " + stream.pid
+        : stream.status.charAt(0).toUpperCase() + stream.status.slice(1));
+      pollLive(stream.id);
+    } catch (error) {
+      console.error("Unable to restore active live stream", error);
+    }
+  };
+
   onMount(() => {
     fetchProjects();
-    const ws = new WebSocket("ws://localhost:8000/ws");
+    restoreActiveLive();
+    const ws = new WebSocket(WS_BASE + "/ws");
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.type === "progress") {
@@ -126,7 +163,7 @@ function App() {
     setStatus("Starting process...");
     setProgress(0);
     try {
-      await fetch("http://localhost:8000/api/v1/downloader/batch", {
+      await apiFetch("/api/v1/downloader/batch", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ urls: urlList, format_type: "mp3_320", normalize: true })
       });
@@ -155,7 +192,7 @@ function App() {
     setGenStatus("Starting generation...");
     try {
       const mixer = genMode() === "mixer";
-      const data = await readResponse(await fetch("http://localhost:8000/api/v1/generator/start", {
+      const data = await readResponse(await apiFetch("/api/v1/generator/start", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           mode: genMode(),
@@ -195,36 +232,99 @@ function App() {
     }
   };
 
-  const handleStartLive = async () => {
-    if (!streamKey() || !videoPaths() || !audioPath()) return;
-    
+  const pollLive = async (id) => {
     try {
-      const vPaths = videoPaths().split('\n').filter(p => p.trim() !== "");
-      const streamData = { stream_key: streamKey(), video_paths: vPaths, audio_path: audioPath() };
-      
-      if (isScheduled()) {
-        setLiveStatus(`Scheduled for ${startTime()} to ${stopTime()}`);
-        await fetch("http://localhost:8000/api/v1/livestream/schedule", {
-          method: "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-            stream_data: streamData,
-            start_time: startTime(),
-            stop_time: stopTime()
-          })
-        });
-      } else {
-        setLiveStatus("Initializing stream...");
-        await fetch("http://localhost:8000/api/v1/livestream/start", {
-          method: "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(streamData)
-        });
+      const [stream, logData] = await Promise.all([
+        readResponse(await apiFetch("/api/v1/livestream/" + id)),
+        readResponse(await apiFetch("/api/v1/livestream/" + id + "/logs?limit=80"))
+      ]);
+      if (disposed) return;
+      setLiveStatus(stream.status === "live"
+        ? "Live · PID " + stream.pid
+        : stream.status.charAt(0).toUpperCase() + stream.status.slice(1));
+      setLiveLogs(logData.logs || []);
+      if (["starting", "live", "retrying", "scheduled", "stopping"].includes(stream.status)) {
+        livePoll = setTimeout(() => pollLive(id), 2000);
       }
-    } catch(e) {
-      setLiveStatus("Failed to start/schedule stream");
-      console.error(e);
+    } catch (error) {
+      if (disposed) return;
+      setLiveStatus("Status error: " + error.message);
+      livePoll = setTimeout(() => pollLive(id), 4000);
     }
   };
 
+  const livePayload = () => ({
+    title: streamTitle().trim(),
+    stream_key: streamKey().trim(),
+    rtmp_url: rtmpUrl().trim(),
+    background_type: liveBackgroundType(),
+    visual_paths: liveVisuals(),
+    audio_paths: liveAudioMode() === "keep" ? [] : liveAudios(),
+    audio_mode: liveAudioMode(),
+    loop: liveLoop(),
+    shuffle: liveShuffle(),
+    auto_restart: liveAutoRestart(),
+    resolution: liveResolution(),
+    fps: Number(liveFps()),
+    video_bitrate: Number(liveBitrate()),
+    visualizer_enabled: liveVisualizer(),
+    style: liveStyle(),
+    visualizer_position: livePosition(),
+    sensitivity: Number(liveSensitivity()),
+    gradient_colors: [liveColorOne(), liveColorTwo()]
+  });
+
+  const handleStartLive = async () => {
+    const audioReady = liveAudioMode() === "keep" || liveAudios().length > 0;
+    if (!streamKey().trim() || liveVisuals().length === 0 || !audioReady) {
+      setLiveStatus("Add the stream key and required media files.");
+      return;
+    }
+
+    setLiveStatus(isScheduled() ? "Saving daily schedule..." : "Initializing stream...");
+    try {
+      const payload = livePayload();
+      const response = isScheduled()
+        ? await apiFetch("/api/v1/livestream/schedule", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              stream_data: payload,
+              start_time: startTime(),
+              stop_time: stopTime(),
+              timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Jakarta"
+            })
+          })
+        : await apiFetch("/api/v1/livestream/start", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+      const data = await readResponse(response);
+      setActiveStreamId(data.stream_id);
+      setStreamKey("");
+      setLiveStatus(data.message);
+      clearTimeout(livePoll);
+      pollLive(data.stream_id);
+    } catch (error) {
+      setLiveStatus("Failed: " + error.message);
+    }
+  };
+
+  const handleStopLive = async () => {
+    if (!activeStreamId()) return;
+    try {
+      const data = await readResponse(await apiFetch(
+        "/api/v1/livestream/stop/" + activeStreamId(),
+        { method: "POST" }
+      ));
+      setLiveStatus(data.message);
+      clearTimeout(livePoll);
+      pollLive(activeStreamId());
+    } catch (error) {
+      setLiveStatus("Stop failed: " + error.message);
+    }
+  };
   const handleNewProject = () => {
     setActiveTab("Dashboard");
     setUrls("");
@@ -244,8 +344,8 @@ function App() {
       const files = Array.from(fileList || []);
       if (files.length === 0) return;
       if (uploading()) return;
-      if (props.multiple && files.length > 100) {
-        setGenStatus("Select no more than 100 images.");
+      if (props.multiple && files.length > (props.maxFiles || 100)) {
+        (props.onStatus || setGenStatus)("Select no more than " + (props.maxFiles || 100) + " files.");
         return;
       }
       setUploading(true);
@@ -255,7 +355,7 @@ function App() {
         for (const file of files) {
           const formData = new FormData();
           formData.append("file", file);
-          const res = await fetch("http://localhost:8000/api/v1/generator/upload", {
+          const res = await apiFetch("/api/v1/generator/upload", {
             method: "POST",
             body: formData
           });
@@ -263,9 +363,9 @@ function App() {
           paths.push(data.path);
         }
         props.onUpload(props.multiple ? paths : paths[0]);
-        setGenStatus("");
+        (props.onStatus || setGenStatus)("");
       } catch(e) {
-        setGenStatus(`Upload failed: ${e.message}`);
+        (props.onStatus || setGenStatus)("Upload failed: " + e.message);
       } finally {
         setUploadCount(n => n - 1);
         setUploading(false);
@@ -277,7 +377,7 @@ function App() {
       if (Array.isArray(props.value)) {
         return props.value.length === 1
           ? props.value[0].split('/').pop()
-          : `${props.value.length} images selected`;
+          : props.value.length + " files selected";
       }
       return props.value ? props.value.split('/').pop() : "";
     };
@@ -312,7 +412,7 @@ function App() {
             </div>
           ) : (
             <span class="text-sm text-textMuted group-hover:text-primary transition-colors">
-              <span class="underline">Browse</span> or drag {props.multiple ? 'images' : 'a file'} here
+              <span class="underline">Browse</span> or drag {props.multiple ? 'files' : 'a file'} here
             </span>
           )}
         </div>
@@ -776,142 +876,205 @@ function App() {
 
           {/* Live Stream View */}
           {activeTab() === "Live Stream" && (
-            <div class="bg-surface border border-border rounded-xl p-6 shadow-sm max-w-3xl">
-              <div class="flex items-center gap-3 mb-6">
-                <div class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></div>
-                <h3 class="text-lg font-medium">Start 24/7 Live Stream</h3>
-              </div>
-              
-              <div class="space-y-5 mb-8">
-                <div class="space-y-1.5">
-                  <label class="text-xs font-medium text-textMuted uppercase tracking-wider">YouTube RTMP Stream Key</label>
-                  <input 
-                    type="password"
-                    value={streamKey()}
-                    onInput={(e) => setStreamKey(e.target.value)}
-                    placeholder="xxxx-xxxx-xxxx-xxxx-xxxx"
-                    class="w-full bg-background border border-border rounded-lg p-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50 font-mono tracking-widest"
-                  />
+            <div class="grid gap-6 max-w-5xl xl:grid-cols-[minmax(0,1fr)_320px]">
+              <section class="bg-surface border border-border rounded-xl p-6 shadow-sm">
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+                  <div>
+                    <p class="text-xs font-medium text-primary uppercase tracking-widest mb-1">VPS stream worker</p>
+                    <h3 class="text-lg font-medium">24/7 Live Stream</h3>
+                  </div>
+                  <span class={"rounded-full px-3 py-1 text-xs font-medium " + (
+                    liveStatus().startsWith("Failed") || liveStatus().includes("error")
+                      ? "bg-red-500/10 text-red-400"
+                      : liveStatus().startsWith("Live")
+                        ? "bg-emerald-500/10 text-emerald-400"
+                        : "bg-primary/10 text-primary"
+                  )}>{liveStatus()}</span>
                 </div>
 
-                <div class="space-y-1.5">
-                  <div class="flex justify-between items-center">
-                    <label class="text-xs font-medium text-textMuted uppercase tracking-wider">Video Sources (Absolute paths, 1 per line)</label>
-                    <label class="text-xs font-medium text-primary hover:text-primaryHover cursor-pointer">
-                      + Browse Files
-                      <input type="file" multiple={true} accept="video/*" class="hidden" onChange={(e) => {
-                        if (e.target.files && e.target.files.length > 0) {
-                          const newPaths = Array.from(e.target.files).map(f => f.path || f.name).join('\n');
-                          setVideoPaths(prev => prev ? prev + '\n' + newPaths : newPaths);
-                        }
-                        e.target.value = null;
-                      }} />
+                <div class="space-y-6">
+                  <div class="grid gap-4 sm:grid-cols-2">
+                    <label class="space-y-1.5">
+                      <span class="text-xs font-medium text-textMuted uppercase tracking-wider">Stream title</span>
+                      <input value={streamTitle()} onInput={(e) => setStreamTitle(e.target.value)}
+                        class="w-full bg-background border border-border rounded-lg p-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50" />
+                    </label>
+                    <label class="space-y-1.5">
+                      <span class="text-xs font-medium text-textMuted uppercase tracking-wider">RTMP destination</span>
+                      <input value={rtmpUrl()} onInput={(e) => setRtmpUrl(e.target.value)}
+                        class="w-full bg-background border border-border rounded-lg p-3 text-sm font-mono focus:outline-none focus:ring-1 focus:ring-primary/50" />
                     </label>
                   </div>
-                  <textarea 
-                    rows="3" 
-                    value={videoPaths()}
-                    onInput={(e) => setVideoPaths(e.target.value)}
-                    onDragOver={(e) => { e.preventDefault(); setIsDraggingVideo(true); }}
-                    onDragLeave={() => setIsDraggingVideo(false)}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      setIsDraggingVideo(false);
-                      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                        const newPaths = Array.from(e.dataTransfer.files).map(f => f.path || f.name).join('\n');
-                        setVideoPaths(prev => prev ? prev + '\n' + newPaths : newPaths);
-                      }
-                    }}
-                    placeholder="Drag & Drop video files here...&#10;Or type absolute paths (1 per line)&#10;/home/user/videos/vid1.mp4"
-                    class={`w-full bg-background border rounded-lg p-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50 font-mono resize-y transition-colors ${isDraggingVideo() ? 'border-primary bg-primary/10 border-dashed' : 'border-border'}`}
-                  />
-                </div>
 
-                <div class="space-y-1.5">
-                  <div class="flex justify-between items-center">
-                    <label class="text-xs font-medium text-textMuted uppercase tracking-wider">Audio Source (Absolute path)</label>
-                    <label class="text-xs font-medium text-primary hover:text-primaryHover cursor-pointer">
-                      + Browse File
-                      <input type="file" accept="audio/*" class="hidden" onChange={(e) => {
-                        if (e.target.files && e.target.files.length > 0) {
-                          const file = e.target.files[0];
-                          setAudioPath(file.path || file.name);
-                        }
-                        e.target.value = null;
-                      }} />
-                    </label>
-                  </div>
-                  <input 
-                    type="text"
-                    value={audioPath()}
-                    onInput={(e) => setAudioPath(e.target.value)}
-                    onDragOver={(e) => { e.preventDefault(); setIsDraggingAudio(true); }}
-                    onDragLeave={() => setIsDraggingAudio(false)}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      setIsDraggingAudio(false);
-                      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                        const file = e.dataTransfer.files[0];
-                        setAudioPath(file.path || file.name);
-                      }
-                    }}
-                    placeholder="Drag & Drop audio file here... or type absolute path"
-                    class={`w-full bg-background border rounded-lg p-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50 font-mono transition-colors ${isDraggingAudio() ? 'border-primary bg-primary/10 border-dashed' : 'border-border'}`}
-                  />
-                </div>
-
-                <div class="pt-4 border-t border-border/50">
-                  <label class="flex items-center gap-3 cursor-pointer">
-                    <input 
-                      type="checkbox"
-                      checked={isScheduled()}
-                      onChange={(e) => setIsScheduled(e.target.checked)}
-                      class="w-4 h-4 rounded border-border text-primary focus:ring-primary/50 bg-background"
-                    />
-                    <span class="text-sm font-medium">Enable Auto-Schedule (Daily)</span>
+                  <label class="block space-y-1.5">
+                    <span class="text-xs font-medium text-textMuted uppercase tracking-wider">Stream key</span>
+                    <input type="password" value={streamKey()} onInput={(e) => setStreamKey(e.target.value)}
+                      autocomplete="off" placeholder="xxxx-xxxx-xxxx-xxxx"
+                      class="w-full bg-background border border-border rounded-lg p-3 text-sm font-mono tracking-widest focus:outline-none focus:ring-1 focus:ring-primary/50" />
+                    <span class="block text-xs text-textMuted">Encrypted before storage and never returned by the API.</span>
                   </label>
-                  
-                  {isScheduled() && (
-                    <div class="grid grid-cols-2 gap-4 mt-4">
-                      <div class="space-y-1.5">
-                        <label class="text-xs font-medium text-textMuted uppercase tracking-wider">Start Time</label>
-                        <input 
-                          type="time"
-                          value={startTime()}
-                          onInput={(e) => setStartTime(e.target.value)}
-                          class="w-full bg-background border border-border rounded-lg p-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
-                        />
+
+                  <div class="grid gap-4 sm:grid-cols-2">
+                    <label class="space-y-1.5">
+                      <span class="text-xs font-medium text-textMuted uppercase tracking-wider">Background source</span>
+                      <select value={liveBackgroundType()} onChange={(e) => {
+                          setLiveBackgroundType(e.target.value);
+                          if (e.target.value === "images") setLiveAudioMode("replace");
+                          setLiveVisuals([]);
+                        }}
+                        class="w-full bg-background border border-border rounded-lg p-3 text-sm">
+                        <option value="videos">Video playlist</option>
+                        <option value="images">Image slideshow</option>
+                      </select>
+                    </label>
+                    <label class="space-y-1.5">
+                      <span class="text-xs font-medium text-textMuted uppercase tracking-wider">Audio behavior</span>
+                      <select value={liveAudioMode()} disabled={liveBackgroundType() === "images"}
+                        onChange={(e) => setLiveAudioMode(e.target.value)}
+                        class="w-full bg-background border border-border rounded-lg p-3 text-sm disabled:opacity-60">
+                        <option value="replace">Mute source · use uploaded music</option>
+                        <option value="mix">Mix source audio and music</option>
+                        <option value="keep">Keep source audio</option>
+                      </select>
+                    </label>
+                  </div>
+
+                  <div class="grid gap-4 sm:grid-cols-2">
+                    <FileUpload
+                      label={liveBackgroundType() === "images" ? "Images" : "Videos"}
+                      accept={liveBackgroundType() === "images" ? "image/*" : "video/*"}
+                      multiple={true} maxFiles={100} value={liveVisuals()}
+                      onUpload={setLiveVisuals} onStatus={setLiveStatus}
+                    />
+                    {liveAudioMode() === "keep" ? (
+                      <div class="rounded-lg border border-border bg-background p-4 flex items-center text-sm text-textMuted">
+                        The original video audio will be streamed.
                       </div>
-                      <div class="space-y-1.5">
-                        <label class="text-xs font-medium text-textMuted uppercase tracking-wider">Stop Time</label>
-                        <input 
-                          type="time"
-                          value={stopTime()}
-                          onInput={(e) => setStopTime(e.target.value)}
-                          class="w-full bg-background border border-border rounded-lg p-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
-                        />
-                      </div>
+                    ) : (
+                      <FileUpload label="Music playlist" accept="audio/*" multiple={true} maxFiles={100}
+                        value={liveAudios()} onUpload={setLiveAudios} onStatus={setLiveStatus} />
+                    )}
+                  </div>
+
+                  <div class="rounded-xl border border-border bg-background/60 p-4">
+                    <h4 class="text-sm font-medium mb-4">Encoding</h4>
+                    <div class="grid gap-4 sm:grid-cols-3">
+                      <label class="space-y-1.5 text-xs text-textMuted">Resolution
+                        <select value={liveResolution()} onChange={(e) => setLiveResolution(e.target.value)}
+                          class="block w-full bg-background border border-border rounded-lg p-2.5 text-sm text-textMain">
+                          <option value="854x480">480p</option>
+                          <option value="1280x720">720p</option>
+                          <option value="1920x1080">1080p</option>
+                          <option value="1080x1920">Vertical 1080p</option>
+                          <option value="1080x1080">Square 1080p</option>
+                        </select>
+                      </label>
+                      <label class="space-y-1.5 text-xs text-textMuted">FPS
+                        <input type="number" min="15" max="60" value={liveFps()} onInput={(e) => setLiveFps(e.target.value)}
+                          class="block w-full bg-background border border-border rounded-lg p-2.5 text-sm text-textMain" />
+                      </label>
+                      <label class="space-y-1.5 text-xs text-textMuted">Video bitrate (kbps)
+                        <input type="number" min="500" max="20000" step="100" value={liveBitrate()} onInput={(e) => setLiveBitrate(e.target.value)}
+                          class="block w-full bg-background border border-border rounded-lg p-2.5 text-sm text-textMain" />
+                      </label>
                     </div>
-                  )}
-                </div>
-              </div>
-              
-              <div class="flex justify-between items-center pt-4 border-t border-border">
-                <div class="flex items-center gap-3">
-                  <span class="text-sm text-textMuted">Status:</span>
-                  <span class={`text-sm font-medium ${liveStatus().includes('Failed') ? 'text-red-400' : liveStatus().includes('Started') || liveStatus().includes('Scheduled') ? 'text-emerald-400' : 'text-primary'}`}>
-                    {liveStatus()}
-                  </span>
+                  </div>
+
+                  <div class="rounded-xl border border-border bg-background/60 p-4">
+                    <label class="flex items-center justify-between gap-4 cursor-pointer">
+                      <span><span class="block text-sm font-medium">Audio visualizer</span>
+                        <span class="text-xs text-textMuted">Rendered live by FFmpeg over the selected background.</span></span>
+                      <input type="checkbox" checked={liveVisualizer()} onChange={(e) => setLiveVisualizer(e.target.checked)} class="w-4 h-4" />
+                    </label>
+                    {liveVisualizer() && (
+                      <div class="grid gap-4 sm:grid-cols-4 mt-4">
+                        <label class="space-y-1.5 text-xs text-textMuted">Style
+                          <select value={liveStyle()} onChange={(e) => setLiveStyle(e.target.value)}
+                            class="block w-full bg-background border border-border rounded-lg p-2.5 text-sm text-textMain">
+                            <option value="bars">Bars</option><option value="wave">Wave</option><option value="spectrum">Spectrum</option>
+                          </select>
+                        </label>
+                        <label class="space-y-1.5 text-xs text-textMuted">Position
+                          <select value={livePosition()} onChange={(e) => setLivePosition(e.target.value)}
+                            class="block w-full bg-background border border-border rounded-lg p-2.5 text-sm text-textMain">
+                            <option value="top">Top</option><option value="center">Center</option><option value="bottom">Bottom</option>
+                          </select>
+                        </label>
+                        <label class="space-y-1.5 text-xs text-textMuted">Sensitivity
+                          <input type="number" min="0.1" max="12" step="0.1" value={liveSensitivity()} onInput={(e) => setLiveSensitivity(e.target.value)}
+                            class="block w-full bg-background border border-border rounded-lg p-2.5 text-sm text-textMain" />
+                        </label>
+                        <div class="space-y-1.5 text-xs text-textMuted">Colors
+                          <div class="flex gap-2">
+                            <input type="color" value={liveColorOne()} onInput={(e) => setLiveColorOne(e.target.value)}
+                              class="h-10 w-full rounded bg-transparent" aria-label="Visualizer color one" />
+                            <input type="color" value={liveColorTwo()} onInput={(e) => setLiveColorTwo(e.target.value)}
+                              class="h-10 w-full rounded bg-transparent" aria-label="Visualizer color two" />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div class="grid gap-3 sm:grid-cols-3">
+                    <label class="flex items-center gap-2 text-sm"><input type="checkbox" checked={liveLoop()}
+                      onChange={(e) => setLiveLoop(e.target.checked)} /> Infinite loop</label>
+                    <label class="flex items-center gap-2 text-sm"><input type="checkbox" checked={liveShuffle()}
+                      onChange={(e) => setLiveShuffle(e.target.checked)} /> Shuffle playlist</label>
+                    <label class="flex items-center gap-2 text-sm"><input type="checkbox" checked={liveAutoRestart()}
+                      onChange={(e) => setLiveAutoRestart(e.target.checked)} /> Auto restart</label>
+                  </div>
+
+                  <div class="rounded-xl border border-border p-4">
+                    <label class="flex items-center gap-3 cursor-pointer">
+                      <input type="checkbox" checked={isScheduled()} onChange={(e) => setIsScheduled(e.target.checked)} class="w-4 h-4" />
+                      <span class="text-sm font-medium">Daily schedule</span>
+                    </label>
+                    {isScheduled() && (
+                      <div class="grid grid-cols-2 gap-4 mt-4">
+                        <label class="space-y-1.5 text-xs text-textMuted">Start
+                          <input type="time" value={startTime()} onInput={(e) => setStartTime(e.target.value)}
+                            class="block w-full bg-background border border-border rounded-lg p-3 text-sm text-textMain" />
+                        </label>
+                        <label class="space-y-1.5 text-xs text-textMuted">Stop
+                          <input type="time" value={stopTime()} onInput={(e) => setStopTime(e.target.value)}
+                            class="block w-full bg-background border border-border rounded-lg p-3 text-sm text-textMain" />
+                        </label>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                <button 
-                  onClick={handleStartLive}
-                  class={`${isScheduled() ? 'bg-primary hover:bg-primaryHover' : 'bg-red-600 hover:bg-red-700'} text-white px-6 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center gap-2`}
-                >
-                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
-                  {isScheduled() ? "Schedule Live" : "Go Live"}
-                </button>
-              </div>
+                <div class="flex flex-wrap justify-end gap-3 mt-6 pt-5 border-t border-border">
+                  {activeStreamId() && (
+                    <button onClick={handleStopLive}
+                      class="border border-red-500/50 text-red-400 hover:bg-red-500/10 px-5 py-2.5 rounded-lg text-sm font-medium">Stop</button>
+                  )}
+                  <button onClick={handleStartLive} disabled={uploadCount() > 0}
+                    class={(isScheduled() ? "bg-primary hover:bg-primaryHover" : "bg-red-600 hover:bg-red-700") + " disabled:opacity-50 text-white px-6 py-2.5 rounded-lg text-sm font-medium shadow-sm"}>
+                    {isScheduled() ? "Save Schedule" : "Go Live"}
+                  </button>
+                </div>
+              </section>
+
+              <aside class="bg-surface border border-border rounded-xl p-5 shadow-sm min-h-80 xl:sticky xl:top-6 xl:self-start">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-sm font-medium">Stream log</h3>
+                  <span class="text-[10px] uppercase tracking-widest text-textMuted">{liveLogs().length} events</span>
+                </div>
+                <div class="space-y-2 max-h-[680px] overflow-y-auto font-mono text-xs">
+                  {liveLogs().length === 0 ? (
+                    <p class="text-textMuted">Logs appear after a stream is created.</p>
+                  ) : liveLogs().map((entry) => (
+                    <div class="border-l-2 border-border pl-3 py-1">
+                      <p class={entry.level === "ERROR" ? "text-red-400" : entry.level === "SUCCESS" ? "text-emerald-400" : "text-textMuted"}>
+                        {entry.message}
+                      </p>
+                      <time class="text-[10px] text-textMuted/70">{new Date(entry.created_at).toLocaleTimeString()}</time>
+                    </div>
+                  ))}
+                </div>
+              </aside>
             </div>
           )}
         </div>
