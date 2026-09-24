@@ -1,0 +1,25 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "autotube-web",
+  "main": "./cloudflare/worker.js",
+  "compatibility_date": "2026-09-24",
+  "workers_dev": true,
+  "routes": [
+    {
+      "pattern": "tube.adflx.com",
+      "custom_domain": true
+    }
+  ],
+  "assets": {
+    "directory": "./frontend/dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/be", "/be/*"]
+  },
+  "vpc_services": [
+    {
+      "binding": "AUTOTUBE_API",
+      "service_id": "01a0d5a6-3d5e-7730-80bf-8648e4d7491c"
+    }
+  ]
+}

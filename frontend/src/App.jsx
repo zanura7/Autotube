@@ -1,7 +1,10 @@
 import { createSignal, onMount, onCleanup } from 'solid-js';
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL || "http://localhost:8000").replace(/\/$/, "");
-const WS_BASE = (import.meta.env.VITE_WS_BASE_URL || API_BASE.replace(/^http/, "ws")).replace(/\/$/, "");
+const DEFAULT_WS_BASE = API_BASE.startsWith("http")
+  ? API_BASE.replace(/^http/, "ws")
+  : `${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}${API_BASE.startsWith("/") ? API_BASE : `/${API_BASE}`}`;
+const WS_BASE = (import.meta.env.VITE_WS_BASE_URL || DEFAULT_WS_BASE).replace(/\/$/, "");
 const apiUrl = (path) => API_BASE + path;
 const apiFetch = (path, options = {}) => fetch(apiUrl(path), { credentials: "include", ...options });
 

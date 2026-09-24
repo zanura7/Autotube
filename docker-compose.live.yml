@@ -23,9 +23,9 @@ services:
   tunnel:
     image: cloudflare/cloudflared:latest
     profiles: ["tunnel"]
-    env_file:
-      - .env.live
-    command: tunnel --no-autoupdate run
+    command: tunnel --no-autoupdate run --token-file /run/secrets/tunnel_token
+    secrets:
+      - tunnel_token
     restart: unless-stopped
     depends_on:
       api:
@@ -35,3 +35,7 @@ volumes:
   autotube_data:
   autotube_uploads:
   autotube_generations:
+
+secrets:
+  tunnel_token:
+    file: ./cloudflared.token
