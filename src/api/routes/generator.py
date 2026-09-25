@@ -66,15 +66,23 @@ def validate_request(request):
         raise HTTPException(422, "Output name must be a valid MP4 filename without a folder path.")
     request.output_name = name
     if request.mode == "mixer":
-        if not request.image_folder or not Path(request.image_folder).is_dir():
-            raise HTTPException(422, "Image folder not found.")
-        if not any(p.is_file() and p.suffix.lower() in IMAGE_EXTENSIONS
-                   for p in Path(request.image_folder).iterdir()):
-            raise HTTPException(422, "Image folder contains no supported images.")
-        if not request.audio_files:
-            raise HTTPException(422, "Select at least one audio file.")
+        if not request.audio_files or len(request.audio_files) > 100:
+            raise HTTPException(422, "Select between one and 100 audio files.")
         for path in request.audio_files:
             require_media(path, AUDIO_EXTENSIONS, "Audio")
+        if request.background_type == "video":
+            require_media(request.bg_path, VIDEO_EXTENSIONS, "Video")
+        elif request.image_files:
+            if len(request.image_files) > 100:
+                raise HTTPException(422, "Select between one and 100 images.")
+            for path in request.image_files:
+                require_media(path, IMAGE_EXTENSIONS, "Image")
+        else:
+            if not request.image_folder or not Path(request.image_folder).is_dir():
+                raise HTTPException(422, "Select images or provide an image folder.")
+            if not any(p.is_file() and p.suffix.lower() in IMAGE_EXTENSIONS
+                       for p in Path(request.image_folder).iterdir()):
+                raise HTTPException(422, "Image folder contains no supported images.")
     elif request.mode == "visualizer":
         from src.backend.audio_visualizer import AudioVisualizer
         if request.style not in AudioVisualizer.STYLE_GROUPS:
@@ -187,9 +195,31 @@ def run_generation(request, project_id, output):
                 )
             elif request.mode == "mixer":
                 from src.backend.advanced_image_mixer import AdvancedImageMixer
-                result = AdvancedImageMixer(output.parent).generate_video(
-                    image_folder=request.image_folder, audio_files=request.audio_files,
-                    output_file=str(output))
+                mixer = AdvancedImageMixer(output.parent)
+                if request.background_type == "video":
+                    from src.backend.loop_creator import LoopCreator
+                    concatenated_audio = mixer.concatenate_audio(request.audio_files)
+                    if not concatenated_audio:
+                        raise RuntimeError("Could not concatenate the audio playlist.")
+                    try:
+                        duration = mixer.get_audio_duration(concatenated_audio)
+                        if not duration or duration <= 0:
+                            raise RuntimeError("Cannot read the audio playlist duration.")
+                        result = LoopCreator(output.parent).create_loop(
+                            video_path=request.bg_path,
+                            target_duration=duration,
+                            audio_path=str(concatenated_audio),
+                            output_filename=output.name,
+                        )
+                    finally:
+                        concatenated_audio.unlink(missing_ok=True)
+                else:
+                    result = mixer.generate_video(
+                        image_folder=request.image_folder,
+                        image_files=request.image_files,
+                        audio_files=request.audio_files,
+                        output_file=str(output),
+                    )
             else:
                 result = VideoGenerator(output.parent).generate_video(
                     audio_folder=request.audio_path, visual_path=request.bg_path,

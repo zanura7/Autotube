@@ -47,7 +47,7 @@ class AdvancedImageMixer:
 
     def generate_video(
         self,
-        image_folder: str,
+        image_folder: Optional[str],
         audio_files: List[str],
         output_file: str,
         rotation_mode: str = ROTATION_MODE_SEQUENTIAL,
@@ -56,6 +56,7 @@ class AdvancedImageMixer:
         transition_duration: float = 1.0,
         resolution: str = DEFAULT_RESOLUTION,
         progress_callback: Optional[Callable] = None,
+        image_files: Optional[List[str]] = None,
     ) -> bool:
         """
         Generate video from multiple images and audio files
@@ -83,7 +84,11 @@ class AdvancedImageMixer:
             if progress_callback:
                 progress_callback(0.1, "Collecting image files...")
 
-            image_files = self.get_image_files(image_folder)
+            image_files = (
+                [Path(path) for path in image_files]
+                if image_files
+                else self.get_image_files(image_folder)
+            )
 
             if not image_files:
                 self.log("❌ No image files found!", "ERROR")

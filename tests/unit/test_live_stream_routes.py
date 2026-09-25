@@ -1,9 +1,12 @@
+from datetime import datetime, timezone
+
 from fastapi import HTTPException
 import pytest
 
 from src.api.routes.livestream import (
     DailyScheduleRequest,
     LiveStreamRequest,
+    _database_utc,
     schedule_daily,
 )
 
@@ -41,3 +44,11 @@ def test_image_background_rejects_original_audio_mode():
         _normalized_paths(request)
 
     assert error.value.status_code == 422
+
+
+def test_sqlite_datetime_without_offset_is_restored_as_utc():
+    stored_value = datetime(2026, 9, 25, 12, 30)
+
+    restored = _database_utc(stored_value)
+
+    assert restored == datetime(2026, 9, 25, 12, 30, tzinfo=timezone.utc)

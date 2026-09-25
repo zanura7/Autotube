@@ -49,6 +49,9 @@ function App() {
   const [genOut, setGenOut] = createSignal("output_video.mp4");
   const [genStyle, setGenStyle] = createSignal("Classic Bar");
   const [genImages, setGenImages] = createSignal([]);
+  const [mixerBackgroundType, setMixerBackgroundType] = createSignal("images");
+  const [mixerImages, setMixerImages] = createSignal([]);
+  const [mixerAudios, setMixerAudios] = createSignal([]);
   const [visBackgroundType, setVisBackgroundType] = createSignal("images");
   const [visAudioMode, setVisAudioMode] = createSignal("replace");
   const [visVideoShorter, setVisVideoShorter] = createSignal("loop");
@@ -180,13 +183,17 @@ function App() {
 
   const handleGenerate = async () => {
     if (genBusy() || uploadCount() > 0) return;
+    const mixer = genMode() === "mixer";
     const visualizer = genMode() === "visualizer";
-    const visualReady = visualizer && visBackgroundType() === "images"
-      ? genImages().length > 0
-      : Boolean(genBg().trim());
+    const visualReady = mixer
+      ? (mixerBackgroundType() === "images" ? mixerImages().length > 0 : Boolean(genBg().trim()))
+      : visualizer && visBackgroundType() === "images"
+        ? genImages().length > 0
+        : Boolean(genBg().trim());
     const audioRequired = genMode() !== "loop"
       && !(visualizer && visBackgroundType() === "video" && visAudioMode() === "keep");
-    if (!genOut().trim() || !visualReady || (audioRequired && !genAudio().trim())) {
+    const audioReady = mixer ? mixerAudios().length > 0 : !audioRequired || Boolean(genAudio().trim());
+    if (!genOut().trim() || !visualReady || !audioReady) {
       setGenStatus("Select the required audio and visual sources and enter an output name.");
       return;
     }
@@ -194,19 +201,21 @@ function App() {
     setGenDownload("");
     setGenStatus("Starting generation...");
     try {
-      const mixer = genMode() === "mixer";
       const data = await readResponse(await apiFetch("/api/v1/generator/start", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           mode: genMode(),
           audio_path: mixer ? undefined : genAudio().trim() || null,
-          bg_path: mixer ? undefined : genBg().trim(),
+          bg_path: mixer
+            ? (mixerBackgroundType() === "video" ? genBg().trim() : undefined)
+            : genBg().trim(),
           output_name: genOut().trim(),
           style: genStyle(),
-          image_folder: mixer ? genBg().trim() : undefined,
-          audio_files: mixer ? genAudio().split('\n').map(p => p.trim()).filter(Boolean) : undefined,
-          background_type: visualizer ? visBackgroundType() : undefined,
-          image_files: visualizer && visBackgroundType() === "images" ? genImages() : undefined,
+          audio_files: mixer ? mixerAudios() : undefined,
+          background_type: mixer ? mixerBackgroundType() : visualizer ? visBackgroundType() : undefined,
+          image_files: mixer && mixerBackgroundType() === "images"
+            ? mixerImages()
+            : visualizer && visBackgroundType() === "images" ? genImages() : undefined,
           audio_mode: visualizer ? visAudioMode() : undefined,
           video_shorter_mode: visualizer ? visVideoShorter() : undefined,
           image_order: visualizer ? visImageOrder() : undefined,
@@ -334,6 +343,8 @@ function App() {
     setGenAudio("");
     setGenBg("");
     setGenImages([]);
+    setMixerImages([]);
+    setMixerAudios([]);
     setGenOut("output_video.mp4");
     setStatus("Ready");
     setProgress(0);
@@ -517,7 +528,14 @@ function App() {
                     <select 
                       disabled={genBusy() || uploadCount() > 0}
                       value={genMode()} 
-                      onInput={e => { setGenMode(e.target.value); setGenAudio(""); setGenBg(""); setGenImages([]); }} 
+                      onInput={e => {
+                        setGenMode(e.target.value);
+                        setGenAudio("");
+                        setGenBg("");
+                        setGenImages([]);
+                        setMixerImages([]);
+                        setMixerAudios([]);
+                      }}
                       class="w-full bg-background border border-border rounded-lg p-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
                     >
                       <option value="simple">Simple Generator</option>
@@ -543,24 +561,57 @@ function App() {
                   {genMode() === 'mixer' ? (
                     <>
                       <div class="space-y-1.5">
-                        <label class="text-xs font-medium text-textMuted uppercase tracking-wider">Image Folder Path</label>
-                        <input 
-                          type="text" 
-                          value={genBg()} 
-                          onInput={e => setGenBg(e.target.value)} 
-                          placeholder="/path/to/images_folder"
-                          class="w-full bg-background border border-border rounded-lg p-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50 font-mono" 
-                        />
+                        <label class="text-xs font-medium text-textMuted uppercase tracking-wider" for="mixer-background-source">Visual Playlist</label>
+                        <select
+                          id="mixer-background-source"
+                          disabled={genBusy() || uploadCount() > 0}
+                          value={mixerBackgroundType()}
+                          onInput={e => {
+                            setMixerBackgroundType(e.target.value);
+                            setGenBg("");
+                            setMixerImages([]);
+                          }}
+                          class="w-full bg-background border border-border rounded-lg p-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
+                        >
+                          <option value="images">Image Playlist</option>
+                          <option value="video">Video</option>
+                        </select>
                       </div>
-                      <div class="space-y-1.5">
-                        <label class="text-xs font-medium text-textMuted uppercase tracking-wider">Audio Files (1 per line)</label>
-                        <textarea 
-                          rows="3"
-                          value={genAudio()} 
-                          onInput={e => setGenAudio(e.target.value)} 
-                          placeholder="/path/to/audio1.mp3&#10;/path/to/audio2.mp3"
-                          class="w-full bg-background border border-border rounded-lg p-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50 font-mono resize-y" 
+                      <FileUpload
+                        label="Music Playlist (Up to 100)"
+                        accept="audio/*"
+                        value={mixerAudios()}
+                        onUpload={setMixerAudios}
+                        multiple={true}
+                        maxFiles={100}
+                        disabled={genBusy()}
+                      />
+                      {mixerBackgroundType() === "images" ? (
+                        <FileUpload
+                          label="Images (Up to 100)"
+                          accept="image/*"
+                          value={mixerImages()}
+                          onUpload={setMixerImages}
+                          multiple={true}
+                          maxFiles={100}
+                          disabled={genBusy()}
                         />
+                      ) : (
+                        <FileUpload
+                          label="Playlist Video"
+                          accept="video/*"
+                          value={genBg()}
+                          onUpload={setGenBg}
+                          disabled={genBusy()}
+                        />
+                      )}
+                      <div class="rounded-lg border border-border bg-background p-4 flex items-start gap-3">
+                        <div class="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-emerald-400"></div>
+                        <p class="text-xs leading-5 text-textMuted">
+                          {mixerBackgroundType() === "images"
+                            ? "Uploaded images are mixed with the music playlist in the selected order."
+                            : "The original video audio is muted. The video loops until the uploaded music playlist ends."}
+                        </p>
                       </div>
                     </>
                   ) : genMode() === 'visualizer' ? (

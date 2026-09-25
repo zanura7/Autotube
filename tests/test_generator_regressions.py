@@ -102,7 +102,8 @@ def test_output_is_recorded_and_downloadable(client, media, mode):
     payload = request_for(media)
     payload["mode"] = mode
     if mode == "mixer":
-        payload.update(image_folder=str(media[0].parent), audio_files=[str(media[1])])
+        payload.update(image_folder=None, image_files=[str(media[0])],
+                       audio_files=[str(media[1])])
     if mode == "loop":
         video = media[0].with_suffix(".mp4")
         video.write_bytes(b"source")
@@ -134,6 +135,41 @@ def test_renderer_exception_marks_failed(client, media):
         data = client.post("/generator/start", json=request_for(media)).json()
     assert client.get(f"/generator/{data['project_id']}").json()["status"] == "Failed"
     assert client.get(f"/generator/{data['project_id']}/download").status_code == 404
+
+
+def test_mixer_video_replaces_audio_with_uploaded_playlist(client, media):
+    video = media[0].with_suffix(".mp4")
+    video.write_bytes(b"source video")
+    concatenated = media[0].parent / "playlist.m4a"
+    concatenated.write_bytes(b"joined audio")
+    payload = request_for(media)
+    payload.update(
+        mode="mixer",
+        background_type="video",
+        bg_path=str(video),
+        image_folder=None,
+        image_files=None,
+        audio_files=[str(media[1])],
+    )
+
+    def render(renderer, **kwargs):
+        (renderer.output_folder / kwargs["output_filename"]).write_bytes(b"rendered video")
+        return True
+
+    with (
+        patch("src.backend.advanced_image_mixer.AdvancedImageMixer.concatenate_audio",
+              return_value=concatenated),
+        patch("src.backend.advanced_image_mixer.AdvancedImageMixer.get_audio_duration",
+              return_value=1.0),
+        patch("src.backend.loop_creator.LoopCreator.create_loop", autospec=True,
+              side_effect=render) as create_loop,
+    ):
+        data = client.post("/generator/start", json=payload).json()
+
+    assert client.get(f"/generator/{data['project_id']}").json()["status"] == "Completed"
+    assert create_loop.call_args.kwargs["video_path"] == str(video)
+    assert create_loop.call_args.kwargs["audio_path"] == str(concatenated)
+    assert not concatenated.exists()
 
 
 def probe_output(output, expected_duration=1.0):

@@ -94,6 +94,15 @@ def _as_utc(value: Optional[datetime], field_name: str) -> Optional[datetime]:
     return value.astimezone(timezone.utc)
 
 
+def _database_utc(value: Optional[datetime]) -> Optional[datetime]:
+    # SQLite may return timezone-aware columns without their original UTC offset.
+    if value is None:
+        return None
+    if value.tzinfo is None:
+        return value.replace(tzinfo=timezone.utc)
+    return value.astimezone(timezone.utc)
+
+
 def _normalized_paths(request: LiveStreamRequest):
     visuals = list(request.visual_paths or request.video_paths)
     audios = list(request.audio_paths)
@@ -182,8 +191,8 @@ def _serialize(stream: LiveStream):
         "max_retries": stream.max_retries,
         "pid": stream.pid,
         "error_message": stream.error_message,
-        "scheduled_start": stream.scheduled_start,
-        "scheduled_stop": stream.scheduled_stop,
+        "scheduled_start": _database_utc(stream.scheduled_start),
+        "scheduled_stop": _database_utc(stream.scheduled_stop),
         "started_at": stream.started_at,
         "stopped_at": stream.stopped_at,
         "created_at": stream.created_at,
@@ -202,10 +211,12 @@ def _get_stream(stream_id: str) -> LiveStream:
 
 def _schedule_once(stream: LiveStream) -> None:
     now = datetime.now(timezone.utc)
-    if stream.scheduled_start and stream.scheduled_start > now:
+    scheduled_start = _database_utc(stream.scheduled_start)
+    scheduled_stop = _database_utc(stream.scheduled_stop)
+    if scheduled_start and scheduled_start > now:
         scheduler.add_job(
             _start_scheduled_stream,
-            DateTrigger(run_date=stream.scheduled_start),
+            DateTrigger(run_date=scheduled_start),
             args=[stream.id],
             id=f"live:{stream.id}:start",
             replace_existing=True,
@@ -214,10 +225,10 @@ def _schedule_once(stream: LiveStream) -> None:
     else:
         live_stream_manager.start(stream.id)
 
-    if stream.scheduled_stop and stream.scheduled_stop > now:
+    if scheduled_stop and scheduled_stop > now:
         scheduler.add_job(
             _stop_scheduled_stream,
-            DateTrigger(run_date=stream.scheduled_stop),
+            DateTrigger(run_date=scheduled_stop),
             args=[stream.id],
             id=f"live:{stream.id}:stop",
             replace_existing=True,
