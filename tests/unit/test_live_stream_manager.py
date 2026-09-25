@@ -117,7 +117,25 @@ def test_command_uses_infinite_input_loop_and_live_visualizer(tmp_path, secret_s
     assert "[1:a]" in command_text
     assert command[-1] == "rtmp://localhost/live/secret-stream-key"
     assert temp_files[0].read_text(encoding="utf-8").count("file ") == 1
-    assert temp_files[1].read_text(encoding="utf-8").count("file ") == 1
+    assert len(temp_files) == 1
+    assert str(audio) in command
+
+
+def test_visualizer_dimensions_are_clamped_to_output_resolution(secret_store):
+    manager = LiveStreamManager(secret_store=secret_store, ffmpeg_path="ffmpeg")
+
+    filters, _, _ = manager._build_filters(
+        "videos",
+        {
+            "audio_mode": "replace",
+            "resolution": "854x480",
+            "visualizer_enabled": True,
+            "spectrum_width": 960,
+            "spectrum_height": 600,
+        },
+    )
+
+    assert "showfreqs=s=854x480" in filters
 
 
 def test_image_playlist_has_durations_and_rejects_keep_audio(tmp_path, secret_store):

@@ -256,13 +256,16 @@ class LiveStreamManager:
         command.extend(["-f", "concat", "-safe", "0", "-i", str(visual_concat)])
 
         if audios and audio_mode != "keep":
-            audio_concat = stream_dir / "audio.txt"
-            self._write_concat(audio_concat, audios)
-            temp_files.append(audio_concat)
+            audio_input, audio_temp_files = self._prepare_audio_input(
+                audios,
+                stream_dir,
+                int(settings.get("audio_bitrate", 128)),
+            )
+            temp_files.extend(audio_temp_files)
             command.append("-re")
             if stream.loop:
                 command.extend(["-stream_loop", "-1"])
-            command.extend(["-f", "concat", "-safe", "0", "-i", str(audio_concat)])
+            command.extend(["-i", str(audio_input)])
 
         filter_complex, video_label, audio_label = self._build_filters(
             stream.background_type, settings
@@ -373,6 +376,50 @@ class LiveStreamManager:
             for item in payload.get("streams", [])
             if item.get("codec_type")
         }
+    def _prepare_audio_input(
+        self, paths: Sequence[Path], stream_dir: Path, bitrate: int
+    ) -> Tuple[Path, List[Path]]:
+        if len(paths) == 1:
+            return paths[0], []
+
+        output = stream_dir / "audio-playlist.m4a"
+        command = [self.ffmpeg_path, "-nostdin", "-hide_banner", "-loglevel", "error", "-y"]
+        filters = []
+        for index, path in enumerate(paths):
+            command.extend(["-i", str(path)])
+            filters.append(
+                f"[{index}:a:0]aresample=44100,"
+                "aformat=sample_fmts=fltp:channel_layouts=stereo,"
+                f"asetpts=PTS-STARTPTS[a{index}]"
+            )
+        inputs = "".join(f"[a{index}]" for index in range(len(paths)))
+        filters.append(f"{inputs}concat=n={len(paths)}:v=0:a=1[audio]")
+        command.extend(
+            [
+                "-filter_complex",
+                ";".join(filters),
+                "-map",
+                "[audio]",
+                "-c:a",
+                "aac",
+                "-b:a",
+                f"{self._bounded_int(bitrate, 64, 320)}k",
+                str(output),
+            ]
+        )
+        result = subprocess.run(
+            command,
+            capture_output=True,
+            text=True,
+            timeout=3600,
+            check=False,
+        )
+        if result.returncode != 0 or not output.is_file() or not output.stat().st_size:
+            output.unlink(missing_ok=True)
+            detail = (result.stderr or result.stdout or "unknown FFmpeg error").strip()
+            raise ValueError(f"Could not prepare audio playlist: {detail[-500:]}")
+        return output, [output]
+
     def _build_filters(self, background_type: str, settings: Dict) -> Tuple[str, str, str]:
         width, height = self._parse_resolution(settings.get("resolution", "1280x720"))
         fps = self._bounded_int(settings.get("fps", 30), 15, 60)
@@ -409,9 +456,13 @@ class LiveStreamManager:
             parts.extend(["[background]null[vout]", "[baseaudio]anull[aout]"])
             return ";".join(parts), "[vout]", "[aout]"
 
-        visual_width = self._bounded_int(settings.get("spectrum_width", int(width * 0.75)), 80, width)
-        visual_height = self._bounded_int(
-            settings.get("spectrum_height", int(height * 0.2)), 40, height
+        visual_width = min(
+            self._bounded_int(settings.get("spectrum_width", int(width * 0.75)), 80, 3840),
+            width,
+        )
+        visual_height = min(
+            self._bounded_int(settings.get("spectrum_height", int(height * 0.2)), 40, 2160),
+            height,
         )
         opacity = self._bounded_float(settings.get("opacity", 0.94), 0.05, 1.0)
         panel_opacity = self._bounded_float(settings.get("panel_opacity", 0.35), 0.0, 0.9)

@@ -32,7 +32,7 @@ def test_ffmpeg_live_visualizer_smoke(tmp_path):
             "-i",
             "color=c=0x18221b:s=640x360:r=30",
             "-t",
-            "1.5",
+            "1.0",
             "-c:v",
             "libx264",
             "-pix_fmt",
@@ -53,13 +53,16 @@ def test_ffmpeg_live_visualizer_smoke(tmp_path):
             "-i",
             "sine=frequency=440:sample_rate=44100",
             "-t",
-            "1.5",
+            "0.5",
             "-c:a",
             "aac",
             str(audio),
         ],
         check=True,
     )
+
+    second_audio = tmp_path / "music-2.m4a"
+    shutil.copyfile(audio, second_audio)
 
     secrets = SecretStore(Fernet.generate_key())
     stream = LiveStream(
@@ -70,7 +73,7 @@ def test_ffmpeg_live_visualizer_smoke(tmp_path):
         stream_key_encrypted=secrets.encrypt("test-key"),
         background_type="videos",
         visual_paths_json=json.dumps([str(video)]),
-        audio_paths_json=json.dumps([str(audio)]),
+        audio_paths_json=json.dumps([str(audio), str(second_audio)]),
         settings_json=json.dumps(
             {
                 "audio_mode": "replace",
@@ -104,7 +107,7 @@ def test_ffmpeg_live_visualizer_smoke(tmp_path):
 
     manager.preflight(stream)
     command, _ = manager.build_command(stream)
-    command[-5:-5] = ["-t", "1.5"]
+    command[-5:-5] = ["-t", "3.2"]
     command[-1] = str(output)
     result = subprocess.run(command, capture_output=True, text=True, timeout=30)
     assert result.returncode == 0 or "progress=end" in result.stdout, result.stdout + result.stderr
@@ -116,7 +119,7 @@ def test_ffmpeg_live_visualizer_smoke(tmp_path):
             "-v",
             "error",
             "-show_entries",
-            "stream=codec_type,codec_name,width,height",
+            "stream=codec_type,codec_name,width,height:format=duration",
             "-of",
             "json",
             str(output),
@@ -125,6 +128,8 @@ def test_ffmpeg_live_visualizer_smoke(tmp_path):
         text=True,
         check=True,
     )
-    streams = json.loads(probe.stdout)["streams"]
+    payload = json.loads(probe.stdout)
+    streams = payload["streams"]
     assert any(item.get("codec_name") == "h264" and item.get("width") == 640 for item in streams)
     assert any(item.get("codec_name") == "aac" for item in streams)
+    assert float(payload["format"]["duration"]) >= 3.0
